@@ -46,7 +46,7 @@ switch (command) {
     console.log("  delete <task_id>                        Delete a task");
     console.log("  mark-in-progress <task_id>              Mark a task as in-progress");
     console.log("  mark-done <task_id>                     Mark a task as completed");
-    console.log("  list <list-type>(done,in-progress)      List of tasks ");
+    console.log("  list <list-type>(done,in-progress,todo)      List of tasks ");
     break;
   default:
     console.log("that command is not recognized try using node index.js help")
