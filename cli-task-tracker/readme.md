@@ -5,6 +5,7 @@ Here's a fast documentation for your **Client-Task-Tracker** project:
 # Client-Task-Tracker
 
 A simple command-line based task tracker allowing users to add, update, delete, and change the status of tasks. Tasks are stored in JSON files, categorized by their status (`todo`, `in-progress`, `done`).
+- idea from [RoadMap.sh](https://roadmap.sh/projects/task-tracker)
 
 ## Installation
 
