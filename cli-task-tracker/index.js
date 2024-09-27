@@ -1,40 +1,52 @@
+import Task from "./task.model.js"
+const taskLogic = new Task()
 const args = process.argv.splice(2)
 const command = args[0]
-const task = args[1]
+const id = args[1]
 
 switch (command) {
   case "add":
-    console.log("add")
+    const task = args[1]
+    taskLogic.add(task)
     break;
   case "update":
-    console.log("update")
+    const newTask = args[2]
+    taskLogic.update(id, newTask)
 
     break;
   case "delete":
-    console.log("delete")
+    taskLogic.delete(id)
 
     break;
   case "mark-in-progress":
-    console.log("progress")
+    const inProgress = args[1]
+    taskLogic.changeStatus(id, inProgress)
 
     break;
 
   case "mark-done":
-    console.log("markdone")
+    const done = args[1]
+    taskLogic.changeStatus(id, done)
 
     break;
   case "list":
-    console.log("list")
+    const type = args[1]
+    if (!type) {
+      console.log(await taskLogic.list())
+    } else {
+      console.log(await taskLogic.list(type))
+    }
 
     break;
-    case "help":
-    console.log("node index.js list")
-    console.log("node index.js markdone")
-    console.log("node index.js delete")
-    console.log("node index.js progress")
-    console.log("node index.js update")
-    console.log("node index.js update")
-    console.log("node index.js add")
+  case "help":
+    console.log("Usage: node index.js <command> [arguments]");
+    console.log("\nAvailable commands:");
+    console.log("  add <task>                              Add a new task");
+    console.log("  update <task_id> <task>                 Update an existing task");
+    console.log("  delete <task_id>                        Delete a task");
+    console.log("  mark-in-progress <task_id>              Mark a task as in-progress");
+    console.log("  mark-done <task_id>                     Mark a task as completed");
+    console.log("  list <list-type>(done,in-progress)      List of tasks ");
     break;
   default:
     console.log("that command is not recognized try using node index.js help")
