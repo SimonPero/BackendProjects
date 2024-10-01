@@ -9,3 +9,11 @@
 - idea from [RoadMap.sh](https://roadmap.sh/projects/task-tracker)
 
 ---
+
+## GitHub User Activity Fetcher - JavaScript
+
+- [GitHub User Activity Fetcher](./github-user-activity/)
+- This Node.js script fetches a GitHub user's activity from the GitHub API and filters the events based on the type of activity (e.g., `PushEvent`, `ForkEvent`). It provides a command-line interface (CLI) to display the activity details, including commits, repository names, and the event date.
+- idea from [RoadMap.sh](https://roadmap.sh/projects/github-user-activity)
+
+---
