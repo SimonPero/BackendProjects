@@ -1,6 +1,3 @@
-Here's a fast documentation for your **Client-Task-Tracker** project:
-
----
 
 # Client-Task-Tracker
 
@@ -118,7 +115,3 @@ node index.js <command> [arguments]
   ```bash
   node index.js list
   ```
-
----
-
-This should cover the basic functionality and commands for your **Client-Task-Tracker**. Let me know if you need more details!
