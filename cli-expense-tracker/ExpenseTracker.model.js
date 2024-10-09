@@ -1,18 +1,6 @@
+import * as readline from 'node:readline/promises';
+
 export default class ExpenseTrackerLogic {
-    static monthMap = {
-        "01": "January",
-        "02": "February",
-        "03": "March",
-        "04": "April",
-        "05": "May",
-        "06": "June",
-        "07": "July",
-        "08": "August",
-        "09": "September",
-        "10": "October",
-        "11": "November",
-        "12": "December"
-    };
     constructor(description, amount, category) {
         this.id = (Math.floor(Math.random() * 90000000) + 10000000).toString(),
             this.date = new Date().toLocaleDateString("en-GB"),
@@ -27,27 +15,72 @@ export default class ExpenseTrackerLogic {
         }
         return foundExpense
     }
-    addExpense(description, amount, category) {
-        const newExpense = new ExpenseTrackerLogic(description, amount, category)
-        return newExpense
+    async addExpense(description, amount, category, monthsData) {
+        const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1];
+        const foundMonth = monthsData.find((t) => t.number === month);
+        foundMonth.usedBudget += amount;
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        if (foundMonth.usedBudget > foundMonth.budget) {
+            console.log("You are exceeding your monthly budget");
+
+            const answer = await rl.question('Do you want to continue and add the expense? (yes/no) ');
+
+            if (answer.toLowerCase() === 'yes') {
+                console.log("Expense added despite exceeding budget.");
+                const newExpense = new ExpenseTrackerLogic(description, amount, category);
+                rl.close();
+                return { expense: newExpense, mData: monthsData };
+            } else {
+                console.log("Expense not added.");
+                rl.close();
+                throw new Error("Expected Error. Expense has not been added successfully");
+            }
+        } else {
+            const newExpense = new ExpenseTrackerLogic(description, amount, category);
+            rl.close();
+            return { expense: newExpense, mData: monthsData };
+        }
     }
-    updateExpense(data, expenseId, updates) {
+    updateExpense(data, expenseId, updates, monthsData) {
         const expense = this.findById(data, expenseId);
         Object.entries(updates).forEach(([key, value]) => {
             if (value !== undefined) {
-                expense[key] = value;
+                if (key === "amount") {
+                    const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1]
+                    const foundMonth = monthsData.find((t) => t.number === month)
+                    if (expense[key] > value) {
+                        let difer = value - expense[key];
+                        foundMonth.usedBudget += difer
+
+                    } else {
+                        let difer = expense[key] - value;
+                        foundMonth.usedBudget -= difer
+                    }
+                    expense[key] = value;
+                } else {
+                    expense[key] = value;
+                }
             }
         });
-        return data;
+        return { expenseData: data, monthsData: monthsData };
     }
-    deleteExpense(data, expenseId) {
+    deleteExpense(data, expenseId, monthsData) {
         this.findById(data, expenseId)
         data.forEach((expense, i) => {
             if (expense.id === expenseId) {
-                data.splice(i, i)
+                const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1]
+                const foundMonth = monthsData.find((t) => t.number === month)
+                foundMonth.usedBudget -= expense.amount
+                data.splice(i, 1)
             }
         })
-        return data
+        return { expenseData: data, monthsData: monthsData };
+
     }
     async viewList(data, updates) {
         const year = ((new Date().toLocaleDateString("en-GB")).split("/"))[2]
@@ -129,25 +162,27 @@ export default class ExpenseTrackerLogic {
         if (showArr.length !== 0) {
             if (typeof keys[1][1] !== "undefined" && typeof keys[0][1] !== "undefined") {
                 let totalSum = 0
-                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]]
+                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]].name
                 showArr.forEach((expense) => {
                     totalSum += expense.amount
                 })
                 console.log(`Total expenses of ${monthname} from category ${keys[0][1]} : $${totalSum}`)
-
+                return totalSum
             } else if (typeof keys[0][1] !== "undefined") {
                 let totalSum = 0
                 showArr.forEach((expense) => {
                     totalSum += expense.amount
                 })
                 console.log(`Total expenses from category ${keys[0][1]} : $${totalSum}`)
+                return totalSum
             } else if (typeof keys[1][1] !== "undefined") {
-                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]]
+                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]].name
                 let totalSum = 0
                 showArr.forEach((expense) => {
                     totalSum += expense.amount
                 })
                 console.log(`Total expenses of ${monthname} : $${totalSum}`)
+                return totalSum
             }
         } else {
             let totalSum = 0
@@ -157,10 +192,20 @@ export default class ExpenseTrackerLogic {
             console.log(`Total expenses of this year: $${totalSum}`)
         }
     }
-    async setBudget(dunno) {
+    setBudget(monthsData, month, amount) {
+        let parsedMonth = month.toString().replace(/^0+/, '');
+        parsedMonth = parsedMonth.slice(-2);
+        parsedMonth = parsedMonth.padStart(2, '0');
 
+        const foundMonth = monthsData.find((t) => t.number === month)
+
+        if (typeof foundMonth === "undefined") {
+            throw new Error("Try entering a month correctly");
+        }
+        foundMonth.budget = amount
+        return monthsData
     }
-    async exportExpensesFile(dunmo) {
+    exportExpensesFile(dunmo) {
 
     }
 }
