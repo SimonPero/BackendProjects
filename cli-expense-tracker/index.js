@@ -15,7 +15,7 @@ function printHelp() {
     console.log("  create-category <newcategory>                                                               Create a new category of your own");
     console.log("  delete-category <category                                                                   Delete a category by its name");
     console.log("  view-categories                                                                             View all the categories that exist");
-    console.log("  set-budget <amount>                                                                         Set a budget for the current month");
+    console.log("  set-budget --month <number> --amount <cost>                                                 Set a budget for the current month");
     console.log("  export-expenses [--month <number>]                                                          Export a file of the expenses");
 }
 
@@ -44,6 +44,7 @@ async function main() {
     const args = process.argv.splice(2)
     const expensesFileName = "expenses"
     const categoriesFileName = "categories"
+    const monthsFileName = "months"
 
     let parsedArgs = parseArgs(args)
 
@@ -53,6 +54,8 @@ async function main() {
     }
     let data = await fileManager.readFile(expensesFileName);
     let categories = await fileManager.readFile(categoriesFileName);
+    let monthsData = await fileManager.readFile(monthsFileName);
+
     switch (parsedArgs.command) {
         case "add":
             try {
@@ -66,11 +69,15 @@ async function main() {
                     throw new Error("Description and amount are required");
                 }
 
-                const newExpense = expenseTrackerLogic.addExpense(description, parseFloat(amount), category || null);
-                data.push(newExpense);
+                if (amount < 0) {
+                    throw new Error("Amount cannot be negative");
+                }
 
+                const newExpense = await expenseTrackerLogic.addExpense(description, parseFloat(amount), category || null, monthsData);
+                data.push(newExpense.expense);
+                console.log(newExpense.mData)
                 await fileManager.writeFile(expensesFileName, data);
-                console.log("Expense added successfully");
+                await fileManager.writeFile(monthsFileName, newExpense.mData);
             } catch (error) {
                 console.error("Error adding expense:", error.message);
             }
@@ -86,8 +93,12 @@ async function main() {
                 if (!id) {
                     throw new Error("Expense id is required for updating.");
                 }
-                data = expenseTrackerLogic.updateExpense(data, id, { category, amount: amount ? parseFloat(amount) : undefined, description })
-                fileManager.writeFile(expensesFileName, data)
+                if (amount < 0) {
+                    throw new Error("Amount cannot be negative");
+                }
+                data = expenseTrackerLogic.updateExpense(data, id, { category, amount: amount ? parseFloat(amount) : undefined, description }, monthsData)
+                await fileManager.writeFile(expensesFileName, data.expenseData)
+                await fileManager.writeFile(monthsFileName, data.monthsData)
             } catch (error) {
                 console.error("Error updating expense:", error.message);
             }
@@ -95,8 +106,9 @@ async function main() {
         case "delete":
             try {
                 const { id } = parsedArgs.options
-                data = expenseTrackerLogic.deleteExpense(data, id)
-                fileManager.writeFile(expensesFileName, data)
+                data = expenseTrackerLogic.deleteExpense(data, id, monthsData)
+                await fileManager.writeFile(expensesFileName, data.expenseData)
+                await fileManager.writeFile(monthsFileName, data.monthsData)
             } catch (error) {
                 console.error("Error deleting expense:", error.message);
             }
@@ -150,8 +162,20 @@ async function main() {
             categoryLogic.viewCategories(categories)
             break;
         case "set-budget":
-            console.log("wasaaaaaaa 9")
-            expenseTrackerLogic.setBudget()
+            try {
+                const { month, amount } = parsedArgs.options;
+                if (!month || !amount) {
+                    throw new Error("Month and amount are required");
+                }
+                if (amount < 0) {
+                    throw new Error("Amount cannot be negative");
+                }
+                monthsData = expenseTrackerLogic.setBudget(monthsData, month, amount)
+                await fileManager.writeFile(monthsFileName, monthsData);
+
+            } catch (error) {
+                console.error("Error setting a budget", error.message);
+            }
             break;
         case "export-expenses":
             console.log("wasaaaaaaa 10")
