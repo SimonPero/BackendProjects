@@ -1,0 +1,422 @@
+[
+  {
+    "id": "101",
+    "date": "15/01/2024",
+    "description": "Buy groceries",
+    "amount": 50,
+    "category": "food"
+  },
+  {
+    "id": "102",
+    "date": "18/01/2024",
+    "description": "Order pizza",
+    "amount": 25,
+    "category": "food"
+  },
+  {
+    "id": "103",
+    "date": "20/01/2024",
+    "description": "Weekly grocery shopping",
+    "amount": 70,
+    "category": "food"
+  },
+  {
+    "id": "104",
+    "date": "22/01/2024",
+    "description": "Dinner at Italian restaurant",
+    "amount": 45,
+    "category": "food"
+  },
+  {
+    "id": "105",
+    "date": "25/01/2024",
+    "description": "Order sushi for lunch",
+    "amount": 35,
+    "category": "food"
+  },
+  {
+    "id": "106",
+    "date": "28/01/2024",
+    "description": "Buy fruits and vegetables",
+    "amount": 40,
+    "category": "food"
+  },
+  {
+    "id": "107",
+    "date": "05/02/2024",
+    "description": "Buy new jacket",
+    "amount": 100,
+    "category": "clothes"
+  },
+  {
+    "id": "108",
+    "date": "10/02/2024",
+    "description": "Purchase workout clothes",
+    "amount": 90,
+    "category": "clothes"
+  },
+  {
+    "id": "109",
+    "date": "12/02/2024",
+    "description": "Buy new jeans",
+    "amount": 80,
+    "category": "clothes"
+  },
+  {
+    "id": "110",
+    "date": "18/02/2024",
+    "description": "Buy winter coat",
+    "amount": 200,
+    "category": "clothes"
+  },
+  {
+    "id": "111",
+    "date": "22/02/2024",
+    "description": "Buy new shoes",
+    "amount": 150,
+    "category": "clothes"
+  },
+  {
+    "id": "112",
+    "date": "25/02/2024",
+    "description": "Buy formal shirt",
+    "amount": 60,
+    "category": "clothes"
+  },
+  {
+    "id": "113",
+    "date": "08/03/2024",
+    "description": "Attend painting class",
+    "amount": 120,
+    "category": "hobby"
+  },
+  {
+    "id": "114",
+    "date": "12/03/2024",
+    "description": "Photography workshop",
+    "amount": 150,
+    "category": "hobby"
+  },
+  {
+    "id": "115",
+    "date": "15/03/2024",
+    "description": "Join cooking class",
+    "amount": 100,
+    "category": "hobby"
+  },
+  {
+    "id": "116",
+    "date": "18/03/2024",
+    "description": "Movie night with friends",
+    "amount": 30,
+    "category": "hobby"
+  },
+  {
+    "id": "117",
+    "date": "20/03/2024",
+    "description": "Attend music festival",
+    "amount": 80,
+    "category": "hobby"
+  },
+  {
+    "id": "118",
+    "date": "25/03/2024",
+    "description": "Guitar lessons",
+    "amount": 110,
+    "category": "hobby"
+  },
+  {
+    "id": "119",
+    "date": "05/04/2024",
+    "description": "Grocery shopping",
+    "amount": 60,
+    "category": "food"
+  },
+  {
+    "id": "120",
+    "date": "12/04/2024",
+    "description": "Order burgers",
+    "amount": 25,
+    "category": "food"
+  },
+  {
+    "id": "121",
+    "date": "18/04/2024",
+    "description": "Buy sushi for dinner",
+    "amount": 45,
+    "category": "food"
+  },
+  {
+    "id": "122",
+    "date": "20/04/2024",
+    "description": "Grocery run",
+    "amount": 70,
+    "category": "food"
+  },
+  {
+    "id": "123",
+    "date": "25/04/2024",
+    "description": "Dinner at restaurant",
+    "amount": 60,
+    "category": "food"
+  },
+  {
+    "id": "124",
+    "date": "30/04/2024",
+    "description": "Buy salad ingredients",
+    "amount": 35,
+    "category": "food"
+  },
+  {
+    "id": "125",
+    "date": "01/05/2024",
+    "description": "Buy a backpack",
+    "amount": 120,
+    "category": "clothes"
+  },
+  {
+    "id": "126",
+    "date": "08/05/2024",
+    "description": "New sneakers",
+    "amount": 100,
+    "category": "clothes"
+  },
+  {
+    "id": "127",
+    "date": "12/05/2024",
+    "description": "Buy workout gear",
+    "amount": 80,
+    "category": "clothes"
+  },
+  {
+    "id": "128",
+    "date": "18/05/2024",
+    "description": "Buy casual shoes",
+    "amount": 110,
+    "category": "clothes"
+  },
+  {
+    "id": "129",
+    "date": "22/05/2024",
+    "description": "Buy winter hat",
+    "amount": 50,
+    "category": "clothes"
+  },
+  {
+    "id": "130",
+    "date": "28/05/2024",
+    "description": "Buy scarf",
+    "amount": 40,
+    "category": "clothes"
+  },
+  {
+    "id": "131",
+    "date": "02/06/2024",
+    "description": "Book reading event",
+    "amount": 20,
+    "category": "hobby"
+  },
+  {
+    "id": "132",
+    "date": "05/06/2024",
+    "description": "Join drawing class",
+    "amount": 90,
+    "category": "hobby"
+  },
+  {
+    "id": "133",
+    "date": "10/06/2024",
+    "description": "Attend concert",
+    "amount": 100,
+    "category": "hobby"
+  },
+  {
+    "id": "134",
+    "date": "12/06/2024",
+    "description": "Photography workshop",
+    "amount": 150,
+    "category": "hobby"
+  },
+  {
+    "id": "135",
+    "date": "18/06/2024",
+    "description": "Art exhibition",
+    "amount": 75,
+    "category": "hobby"
+  },
+  {
+    "id": "136",
+    "date": "22/06/2024",
+    "description": "Outdoor hiking event",
+    "amount": 50,
+    "category": "hobby"
+  },
+  {
+    "id": "137",
+    "date": "01/07/2024",
+    "description": "Order takeout food",
+    "amount": 40,
+    "category": "food"
+  },
+  {
+    "id": "138",
+    "date": "05/07/2024",
+    "description": "Buy snacks",
+    "amount": 20,
+    "category": "food"
+  },
+  {
+    "id": "139",
+    "date": "10/07/2024",
+    "description": "Purchase frozen food",
+    "amount": 60,
+    "category": "food"
+  },
+  {
+    "id": "140",
+    "date": "12/07/2024",
+    "description": "Order seafood platter",
+    "amount": 55,
+    "category": "food"
+  },
+  {
+    "id": "141",
+    "date": "18/07/2024",
+    "description": "Order burgers",
+    "amount": 35,
+    "category": "food"
+  },
+  {
+    "id": "142",
+    "date": "22/07/2024",
+    "description": "Buy salad ingredients",
+    "amount": 30,
+    "category": "food"
+  },
+  {
+    "id": "143",
+    "date": "03/08/2024",
+    "description": "Join swimming lessons",
+    "amount": 120,
+    "category": "hobby"
+  },
+  {
+    "id": "144",
+    "date": "08/08/2024",
+    "description": "Attend dance workshop",
+    "amount": 130,
+    "category": "hobby"
+  },
+  {
+    "id": "145",
+    "date": "12/08/2024",
+    "description": "Book writing seminar",
+    "amount": 150,
+    "category": "hobby"
+  },
+  {
+    "id": "146",
+    "date": "20/08/2024",
+    "description": "Attend art class",
+    "amount": 90,
+    "category": "hobby"
+  },
+  {
+    "id": "147",
+    "date": "25/08/2024",
+    "description": "Visit museum",
+    "amount": 40,
+    "category": "hobby"
+  },
+  {
+    "id": "148",
+    "date": "30/08/2024",
+    "description": "Cooking class",
+    "amount": 70,
+    "category": "hobby"
+  },
+  {
+    "id": "149",
+    "date": "05/09/2024",
+    "description": "buy tshirt",
+    "amount": 20,
+    "category": "clothes"
+  },
+  {
+    "id": "150",
+    "date": "12/09/2024",
+    "description": "Purchase snacks for movie night",
+    "amount": 15,
+    "category": "food"
+  },
+  {
+    "id": "151",
+    "date": "20/09/2024",
+    "description": "Buy groceries",
+    "amount": 50,
+    "category": "food"
+  },
+  {
+    "id": "152",
+    "date": "22/09/2024",
+    "description": "Grocery shopping",
+    "amount": 80,
+    "category": "food"
+  },
+  {
+    "id": "153",
+    "date": "29/09/2024",
+    "description": "Dinner at new restaurant",
+    "amount": 55,
+    "category": "food"
+  },
+  {
+    "id": "154",
+    "date": "02/10/2024",
+    "description": "Purchase new phone case",
+    "amount": 30,
+    "category": "electronics"
+  },
+  {
+    "id": "155",
+    "date": "05/10/2024",
+    "description": "Buy headphones",
+    "amount": 75,
+    "category": "electronics"
+  },
+  {
+    "id": "156",
+    "date": "10/10/2024",
+    "description": "Purchase laptop stand",
+    "amount": 40,
+    "category": "electronics"
+  },
+  {
+    "id": "157",
+    "date": "15/10/2024",
+    "description": "Buy gaming mouse",
+    "amount": 60,
+    "category": "electronics"
+  },
+  {
+    "id": "158",
+    "date": "20/10/2024",
+    "description": "Order phone charger",
+    "amount": 20,
+    "category": "electronics"
+  },
+  {
+    "id": "159",
+    "date": "25/10/2024",
+    "description": "Buy USB hub",
+    "amount": 25,
+    "category": "electronics"
+  },
+  {
+    "id": "93544775",
+    "date": "08/10/2024",
+    "description": "Bough food",
+    "amount": 10,
+    "category": null
+  }
+]

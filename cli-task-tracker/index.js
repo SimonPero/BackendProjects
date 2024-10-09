@@ -1,4 +1,4 @@
-import Task from "./task.model.js"
+import Task from "./Task.model.js"
 const taskLogic = new Task()
 const args = process.argv.splice(2)
 const command = args[0]
