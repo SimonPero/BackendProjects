@@ -24,7 +24,7 @@ export default class Categories {
         }
         categories.forEach((category, i) => {
             if (category.name === nameCategory) {
-                categories.splice(i, i)
+                categories.splice(i, 1)
             }
         })
         return categories
