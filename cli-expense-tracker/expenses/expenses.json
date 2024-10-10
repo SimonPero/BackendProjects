@@ -1,1 +1,37 @@
-[]
+[
+  {
+    "id": "90378882",
+    "date": "09/10/2024",
+    "description": "Buy groceries",
+    "amount": 50,
+    "category": "food"
+  },
+  {
+    "id": "22943901",
+    "date": "09/10/2024",
+    "description": "Purchase new sneakers",
+    "amount": 80,
+    "category": "clothes"
+  },
+  {
+    "id": "70505141",
+    "date": "09/10/2024",
+    "description": "Sign up for painting class",
+    "amount": 120,
+    "category": "hobby"
+  },
+  {
+    "id": "13900916",
+    "date": "09/10/2024",
+    "description": "Dinner at Italian restaurant",
+    "amount": 45,
+    "category": "food"
+  },
+  {
+    "id": "47448325",
+    "date": "09/09/2024",
+    "description": "Buy a new jacket",
+    "amount": 100,
+    "category": "clothes"
+  }
+]

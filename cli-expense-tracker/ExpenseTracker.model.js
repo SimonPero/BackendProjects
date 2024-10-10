@@ -8,6 +8,49 @@ export default class ExpenseTrackerLogic {
             this.amount = amount,
             this.category = category
     }
+    findNameOfMonth(monthsData) {
+        const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1];
+        return monthsData.find((t) => t.number === month);
+    }
+    filterExpenses(data, updates) {
+        const year = ((new Date().toLocaleDateString("en-GB")).split("/"))[2]
+        let showArr = []
+        let keys = Object.entries(updates)
+        keys[1][0] = "date"
+        if (typeof keys[1][1] !== "undefined" && typeof keys[0][1] !== "undefined") {
+            showArr = data.filter(expense => {
+                if ((expense[keys[1][0]].split("/"))[2] === year) {
+                    if ((expense[keys[1][0]].split("/"))[1] === keys[1][1] && expense[keys[0][0]] === keys[0][1]) {
+                        return expense
+                    }
+                }
+            })
+        } else {
+            keys.forEach(([key, value]) => {
+                if (value !== undefined) {
+                    if (key === "date") {
+                        let month = value.toString().replace(/^0+/, '');
+                        month = month.slice(-2);
+                        month = month.padStart(2, '0');
+                        keys[1][1] = month;
+                        value = month;
+
+                        showArr = data.filter((expense) => {
+                            if ((expense[key].split("/"))[2] === year) {
+                                return (expense[key].split("/"))[1] === value
+                            }
+                        })
+                    } else if (key.length) {
+                        showArr = data.filter(expense => expense[key] == value);
+                    }
+                }
+            });
+        }
+        if (showArr.length === 0) {
+            return { showArr: data, success: false, keys: keys }
+        }
+        return { showArr: showArr, success: true, keys: keys }
+    }
     findById(data, expenseId) {
         const foundExpense = data.find((expense) => expense.id === expenseId);
         if (typeof foundExpense === "undefined") {
@@ -16,9 +59,10 @@ export default class ExpenseTrackerLogic {
         return foundExpense
     }
     async addExpense(description, amount, category, monthsData) {
-        const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1];
-        const foundMonth = monthsData.find((t) => t.number === month);
-        foundMonth.usedBudget += amount;
+        const foundMonth = this.findNameOfMonth(monthsData);
+        if (foundMonth) {
+            foundMonth.usedBudget += amount;
+        }
 
         const rl = readline.createInterface({
             input: process.stdin,
@@ -51,8 +95,7 @@ export default class ExpenseTrackerLogic {
         Object.entries(updates).forEach(([key, value]) => {
             if (value !== undefined) {
                 if (key === "amount") {
-                    const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1]
-                    const foundMonth = monthsData.find((t) => t.number === month)
+                    const foundMonth = this.findNameOfMonth(monthsData);
                     if (expense[key] > value) {
                         let difer = value - expense[key];
                         foundMonth.usedBudget += difer
@@ -73,8 +116,9 @@ export default class ExpenseTrackerLogic {
         this.findById(data, expenseId)
         data.forEach((expense, i) => {
             if (expense.id === expenseId) {
-                const month = ((new Date().toLocaleDateString("en-GB")).split("/"))[1]
-                const foundMonth = monthsData.find((t) => t.number === month)
+                const foundMonth = this.findNameOfMonth(monthsData);
+                foundMonth.usedBudget += amount;
+
                 foundMonth.usedBudget -= expense.amount
                 data.splice(i, 1)
             }
@@ -83,86 +127,25 @@ export default class ExpenseTrackerLogic {
 
     }
     async viewList(data, updates) {
-        const year = ((new Date().toLocaleDateString("en-GB")).split("/"))[2]
-        let showArr = []
-        let keys = Object.entries(updates)
-        keys[1][0] = "date"
-        if (typeof keys[1][1] !== "undefined" && typeof keys[0][1] !== "undefined") {
-            showArr = data.filter(expense => {
-                if ((expense[keys[1][0]].split("/"))[2] === year) {
-                    if ((expense[keys[1][0]].split("/"))[1] === keys[1][1] && expense[keys[0][0]] === keys[0][1]) {
-                        return expense
-                    }
-                }
-            })
-        } else {
-            keys.forEach(([key, value]) => {
-                if (value !== undefined) {
-                    if (key === "date") {
-                        let month = value.toString().replace(/^0+/, '');
-                        month = month.slice(-2);
-                        month = month.padStart(2, '0');
-                        keys[1][1] = month;
-                        value = month;
+        const showArr = this.filterExpenses(data, updates)
 
-                        console.log(value, keys[1][1])
-                        showArr = data.filter((expense) => {
-                            if ((expense[key].split("/"))[2] === year) {
-                                return (expense[key].split("/"))[1] === value
-                            }
-                        })
-                    } else if (key.length) {
-                        showArr = data.filter(expense => expense[key] == value);
-                    }
-                }
-            });
-        }
-
-        if (showArr.length !== 0) {
-            console.table(showArr);
-        } else {
-            console.table(data);
+        if (showArr.success) {
+            console.table(showArr.showArr);
+        } else if (!showArr.success) {
+            console.log("Could not find any expense with the characteristics asked for")
         }
     }
-    async viewSummary(data, updates) {
-        const year = ((new Date().toLocaleDateString("en-GB")).split("/"))[2]
-        let showArr = []
-        let keys = Object.entries(updates)
-        keys[1][0] = "date"
-        if (typeof keys[1][1] !== "undefined" && typeof keys[0][1] !== "undefined") {
-            showArr = data.filter(expense => {
-                if ((expense[keys[1][0]].split("/"))[2] === year) {
-                    if ((expense[keys[1][0]].split("/"))[1] === keys[1][1] && expense[keys[0][0]] === keys[0][1]) {
-                        return expense
-                    }
-                }
-            })
-        } else {
-            keys.forEach(([key, value]) => {
-                if (value !== undefined) {
-                    if (key === "date") {
-                        let month = value.toString().replace(/^0+/, '');
-                        month = month.slice(-2);
-                        month = month.padStart(2, '0');
-                        keys[1][1] = month;
-                        value = month;
+    async viewSummary(data, updates, monthsData) {
 
-                        showArr = data.filter((expense) => {
-                            if ((expense[key].split("/"))[2] === year) {
-                                return (expense[key].split("/"))[1] === value
-                            }
-                        })
-                    } else if (key.length) {
-                        showArr = data.filter(expense => expense[key] == value);
-                    }
-                }
-            });
+        const { showArr, success, keys } = this.filterExpenses(data, updates)
+        let monthname;
+        if (keys[1][0] === "date") {
+            const foundMonth = this.findNameOfMonth(monthsData);
+            monthname = foundMonth.name
         }
-
-        if (showArr.length !== 0) {
+        if (success) {
             if (typeof keys[1][1] !== "undefined" && typeof keys[0][1] !== "undefined") {
                 let totalSum = 0
-                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]].name
                 showArr.forEach((expense) => {
                     totalSum += expense.amount
                 })
@@ -176,7 +159,6 @@ export default class ExpenseTrackerLogic {
                 console.log(`Total expenses from category ${keys[0][1]} : $${totalSum}`)
                 return totalSum
             } else if (typeof keys[1][1] !== "undefined") {
-                const monthname = ExpenseTrackerLogic.monthMap[keys[1][1]].name
                 let totalSum = 0
                 showArr.forEach((expense) => {
                     totalSum += expense.amount
@@ -186,7 +168,7 @@ export default class ExpenseTrackerLogic {
             }
         } else {
             let totalSum = 0
-            data.forEach((expense) => {
+            showArr.forEach((expense) => {
                 totalSum += expense.amount
             })
             console.log(`Total expenses of this year: $${totalSum}`)
@@ -204,8 +186,5 @@ export default class ExpenseTrackerLogic {
         }
         foundMonth.budget = amount
         return monthsData
-    }
-    exportExpensesFile(dunmo) {
-
     }
 }

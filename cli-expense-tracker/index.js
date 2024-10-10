@@ -16,7 +16,7 @@ function printHelp() {
     console.log("  delete-category <category                                                                   Delete a category by its name");
     console.log("  view-categories                                                                             View all the categories that exist");
     console.log("  set-budget --month <number> --amount <cost>                                                 Set a budget for the current month");
-    console.log("  export-expenses [--month <number>]                                                          Export a file of the expenses");
+    console.log("  export-expenses [--month <number>] [--category <category>] --filename <name>              Export a file of the expenses");
 }
 
 function parseArgs(args) {
@@ -124,7 +124,7 @@ async function main() {
         case "summary":
             try {
                 const { category, month } = parsedArgs.options
-                expenseTrackerLogic.viewSummary(data, { category, month })
+                expenseTrackerLogic.viewSummary(data, { category, month }, monthsData)
             } catch (error) {
                 console.error("Error viewing the summary of expenses:", error.message);
             }
@@ -178,8 +178,21 @@ async function main() {
             }
             break;
         case "export-expenses":
-            console.log("wasaaaaaaa 10")
-            expenseTrackerLogic.exportExpensesFile()
+            try {
+                const { month, category, filename } = parsedArgs.options;
+                if (!filename) {
+                    throw new Error("You must add the name of the file with --filename");
+                }
+                const { showArr, success } = expenseTrackerLogic.filterExpenses(data, { category, month })
+
+                if (success) {
+                    fileManager.writeCsv(filename, showArr)
+                } else if (!success) {
+                    console.log("Could not find any expense with the characteristics asked for")
+                }
+            } catch (error) {
+                console.error("Error trying to export the data", error.message);
+            }
             break;
         case "help":
             printHelp();
