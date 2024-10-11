@@ -3,6 +3,7 @@ import unitConverterRouter from "./routers/unitConvert.route.js";
 const app = express();
 const port = 8080
 
+app.use(express.json())
 app.use("/api", unitConverterRouter)
 
 app.get('/', (req, res) => {

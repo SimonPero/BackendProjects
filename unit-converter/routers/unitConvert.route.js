@@ -9,4 +9,5 @@ const __dirname = path.dirname(__filename);
 
 unitConverterRouter.use(express.static(path.join(__dirname, '../public')));
 unitConverterRouter.get("/", unitController.loadHtml)
+unitConverterRouter.post("/convert", unitController.convertUnit)
 export default unitConverterRouter;

@@ -18,14 +18,14 @@
       <ul class="list-style-none flex" id="nav-list"></ul>
     </header>
     <main>
-      <form action="">
+      <form>
         <div>
-          <h3>Enter the lenght to convert</h3>
-          <input type="text" />
+          <h3 class="unit">Enter the length to convert</h3>
+          <input name="valueToConvert" type="number" />
         </div>
         <div>
           <h3>Unit to convert from</h3>
-          <select name="" id="">
+          <select name="fromUnit">
             <option value="ml">millimeter</option>
             <option value="cm">centimeter</option>
             <option value="m">meter</option>
@@ -38,7 +38,7 @@
         </div>
         <div>
           <h3>Unit to convert to</h3>
-          <select name="" id="">
+          <select name="toUnit">
             <option value="ml">millimeter</option>
             <option value="cm">centimeter</option>
             <option value="m">meter</option>
@@ -54,5 +54,6 @@
       </form>
     </main>
     <script src="header.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>

@@ -18,14 +18,14 @@
       <ul class="list-style-none flex" id="nav-list"></ul>
     </header>
     <main>
-      <form action="">
+      <form >
         <div>
-          <h3>Enter the temperature to convert</h3>
-          <input type="text" />
+          <h3 class="unit">Enter the temperature to convert</h3>
+          <input name="valueToConvert" type="number" />
         </div>
         <div>
           <h3>Unit to convert from</h3>
-          <select name="" id="">
+          <select name="fromUnit">
             <option value="C">Celsius</option>
             <option value="F">Fahrenheit</option>
             <option value="K">Kelvin</option>
@@ -33,16 +33,17 @@
         </div>
         <div>
           <h3>Unit to convert to</h3>
-          <select name="" id="">
+          <select name="toUnit">
             <option value="C">Celsius</option>
             <option value="F">Fahrenheit</option>
             <option value="K">Kelvin</option>
           </select>
         </div>
 
-        <button>Convert</button>
+        <button type="submit">Convert</button>
       </form>
     </main>
     <script src="header.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
