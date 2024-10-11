@@ -20,8 +20,16 @@
 
 ## CLI Expense Tracker - JavaScript
 
-- [GitHub User Activity Fetcher](./cli-expense-tracker/)
+- [CLI Expense Tracker ](./cli-expense-tracker/)
 - This project idea is a great way to practice my logic building skills and learn how to interact with the filesystem using a CLI application. It also helps me understand how to manage data and provide useful information to users in a structured way.
 - idea from [RoadMap.sh](https://roadmap.sh/projects/expense-tracker)
+
+---
+
+## Unit Converter - JavaScript
+
+- [Unit Converter](./unit-converter/)
+- This project idea is a great way to practice my logic building skills and learn how to interact with the filesystem using a CLI application. It also helps me understand how to manage data and provide useful information to users in a structured way.
+- idea from [RoadMap.sh](https://roadmap.sh/projects/unit-converter)
 
 ---
