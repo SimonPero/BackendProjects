@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "date": "2024-10-14",
+    "title": "Title 1",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "liking": { "likes": 0, "dislikes": 0 },
+    "comments": [{"id":"1"}]
+  },
+  {
+    "id": "2",
+    "date": "2024-10-15",
+    "title": "Title 2",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "liking": { "likes": 0, "dislikes": 0 },
+    "comments": [{"id":"2"}]
+  },
+  {
+    "id": "3",
+    "date": "2024-10-16",
+    "title": "Title 3",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "liking": { "likes": 0, "dislikes": 0 },
+    "comments": [{"id":"3"}]
+  },
+  {
+    "id": "4",
+    "date": "2024-10-17",
+    "title": "Title 4",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "liking": { "likes": 0, "dislikes": 0 },
+    "comments": [{"id":"4"}]
+  },
+  {
+    "id": "5",
+    "date": "2024-10-18",
+    "title": "Title 5",
+    "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "liking": { "likes": 0, "dislikes": 0 },
+    "comments": [{"id":"5"}]
+  }
+]

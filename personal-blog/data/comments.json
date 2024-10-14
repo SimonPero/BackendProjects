@@ -1,0 +1,53 @@
+[
+    {
+      "id": "1",
+      "content": "First article content",
+      "date": "October 14, 2024",
+      "votes": {
+        "upVotes": 0,
+        "downVotes": 0
+      },
+      "articleId": "1"
+    },
+    {
+      "id": "2",
+      "content": "Second article content",
+      "date": "October 14, 2024",
+      "votes": {
+        "upVotes": 0,
+        "downVotes": 0
+      },
+      "articleId": "2"
+    },
+    {
+      "id": "3",
+      "content": "Third article content",
+      "date": "October 14, 2024",
+      "votes": {
+        "upVotes": 0,
+        "downVotes": 0
+      },
+      "articleId": "3"
+    },
+    {
+      "id": "4",
+      "content": "Fourth article content",
+      "date": "October 14, 2024",
+      "votes": {
+        "upVotes": 0,
+        "downVotes": 0
+      },
+      "articleId": "4"
+    },
+    {
+      "id": "5",
+      "content": "Fifth article content",
+      "date": "October 14, 2024",
+      "votes": {
+        "upVotes": 0,
+        "downVotes": 0
+      },
+      "articleId": "5"
+    }
+  ]
+  

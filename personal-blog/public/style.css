@@ -1,0 +1,129 @@
+.open-sans {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+
+header {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+main {
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+header h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+header h4 a {
+  font-size: 18px;
+  color: #1e90ff;
+}
+
+header h4 a:hover {
+  color: #0056b3;
+}
+
+/* Main form container */
+.form-container {
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-field, 
+.textarea-field {
+  width: 100%;
+  margin-bottom: 15px;
+  max-width: 280px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fafafa;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+  border-color: #1e90ff;
+}
+
+.textarea-field {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.action-button {
+  padding: 10px 25px;
+  margin-top: 15px;
+  cursor: pointer;
+  border: none;
+  color: white;
+  background-color: gray;
+  border-radius: 5px;
+}
+
+.action-button:hover {
+  background-color: black;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+}
+
+a:hover {
+  color: #1e90ff;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list-style-none {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.date {
+  color: gray;
+}
