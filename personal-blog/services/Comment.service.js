@@ -7,13 +7,21 @@ export default class Comment {
                 month: "long",
                 day: "numeric"
             }),
-            this.votes = { upVotes: 0, downVotes: 0 },
+            this.votes = 0,
             this.articleId = articleId
     }
     async addComment(articleId, content) {
-
+        const newComment = new Comment(content, articleId)
+        return newComment
     }
-    async deleteComment(articleId, commentId, content) {
-
+    async updateComment(data, commentId, voteType) {
+        data.find((comment) => {
+            if (comment.id === commentId && voteType === "upVote") {
+                comment.votes += 1
+            } else if ((comment.id === commentId && voteType === "downVote")) {
+                comment.votes -= 1
+            }
+        })
+        return data
     }
 }

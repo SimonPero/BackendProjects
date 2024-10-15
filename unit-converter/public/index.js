@@ -118,8 +118,6 @@ converterForm.addEventListener("submit", async (event) => {
         </div>
         `
         const reset = document.querySelector(".reset")
-        console.log(reset)
-        console.log(forms[typeUnit])
         reset.addEventListener("click", () => {
             document.querySelector("main").innerHTML = forms[typeUnit]
         })

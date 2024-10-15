@@ -21,13 +21,36 @@ export default class Article {
         }
         return article
     }
-    async addArticle(params) {
-
+    async addArticle(title, content) {
+        try {
+            const article = new Article(title, content)
+            return article
+        } catch (error) {
+            throw new Error("Unexpected Error");
+        }
     }
-    async editArticle(params) {
-
+    async updateArticle(data, updates, articleId) {
+        const article = await this.getArticleById(data, articleId)
+        Object.entries(updates).forEach(([key, value]) => {
+            if (value !== undefined) {
+                if (key === "liking" && value === "dislike") {
+                    article[key].dislikes += 1
+                } else if (key === "liking" && value === "like") {
+                    article[key].likes += 1
+                } else {
+                    article[key] = value
+                }
+            }
+        });
+        return data
     }
-    async deleteArticle(params) {
-
+    async deleteArticle(data, id) {
+        await this.getArticleById(data, id)
+        data.forEach((article, i) => {
+            if (article.id === id) {
+                data.splice(i, 1)
+            }
+        })
+        return data
     }
 }

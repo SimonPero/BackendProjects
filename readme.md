@@ -36,8 +36,8 @@
 
 ## Personal Blog - JavaScript
 
-- [Personal Blog](./unit-converter/)
--
+- [Personal Blog](./personal-blog/)
+- A simple blog platform where users can view articles, add comments, upvote/downvote comments, and manage articles (create, edit, delete) through an admin interface.
 - idea from [RoadMap.sh](https://roadmap.sh/projects/personal-blog)
 
 ---
