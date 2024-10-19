@@ -1,0 +1,27 @@
+{
+  "name": "api-bloggin-platform",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241011.0",
+    "@types/node": "^22.7.6",
+    "prisma": "^5.21.1",
+    "typescript": "^5.6.3",
+    "wrangler": "^3.81.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "wrangler dev ./index.ts",
+    "deploy": "wrangler deploy --minify --name api-bloggin-platform ./index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/adapter-d1": "^5.21.1",
+    "@prisma/client": "^5.21.1",
+    "hono": "^4.6.5",
+    "zod": "^3.23.8"
+  }
+}

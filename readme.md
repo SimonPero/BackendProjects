@@ -41,3 +41,12 @@
 - idea from [RoadMap.sh](https://roadmap.sh/projects/personal-blog)
 
 ---
+
+## Blogging Platform API - JavaScript
+
+- [Blogging Platform API](./api-bloggin-platform/)
+- Api
+- idea from [RoadMap.sh](https://roadmap.sh/projects/blogging-platform-api)
+
+---
+

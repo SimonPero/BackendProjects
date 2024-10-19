@@ -1,0 +1,10 @@
+name = "api-bloggin-platform"
+main = "./index.js"
+compatibility_date = "2024-10-11"
+compatibility_flags = ["nodejs_compat"]
+
+
+[[d1_databases]]
+binding = "DB"
+database_name = "blogging-platform-db"
+database_id = "a08c1ae9-db24-44f4-87d7-a15e94fb9a49"
