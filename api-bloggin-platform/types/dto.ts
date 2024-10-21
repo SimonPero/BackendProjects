@@ -1,7 +1,7 @@
 export interface CreatePostDTO {
     title: string;
-    content: string;
+    Content: string;
     category: string;
     authorId: number;
-    tagIds: number[];
+    tags: string[];
   }

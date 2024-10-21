@@ -1,13 +1,13 @@
 export interface Post {
   id: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   title: string;
-  content: string;
+  Content: string;
   author: User;
-  authorId: number;
   category: string;
-  tags: Tag[];
+  authorId: number;
+  tags: TagWithoutPosts[];
 }
 
 export interface User {
@@ -15,6 +15,11 @@ export interface User {
   email: string;
   name: string;
   posts: Post[];
+}
+
+export interface TagWithoutPosts {
+  id: number;
+  name: string;
 }
 
 export interface Tag {
