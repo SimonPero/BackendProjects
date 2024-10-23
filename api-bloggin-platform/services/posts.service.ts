@@ -59,7 +59,7 @@ export class PostsService {
     });
   }
 
-  async createPost(data: CreatePostDTO): Promise<Post> {
+  async createPost(userId: number, data: CreatePostDTO): Promise<Post> {
     try {
       const { tags: tagNames = [], ...postData } = data;
       const tags =
@@ -75,7 +75,7 @@ export class PostsService {
           Content: postData.Content,
           category: postData.category,
           author: {
-            connect: { id: postData.authorId },
+            connect: { id: userId },
           },
           ...(tags.length > 0 && {
             tags: {
@@ -110,7 +110,11 @@ export class PostsService {
       },
     });
   }
-  async updatePost(id: number, data: Partial<CreatePostDTO>): Promise<Post> {
+  async updatePost(
+    id: number,
+    userId: number,
+    data: Partial<CreatePostDTO>
+  ): Promise<Post> {
     try {
       const existingPost = await this.prisma.post.findUnique({
         where: { id },
@@ -141,9 +145,9 @@ export class PostsService {
           ...(postData.title && { title: postData.title }),
           ...(postData.Content && { Content: postData.Content }),
           ...(postData.category && { category: postData.category }),
-          ...(postData.authorId && {
+          ...(userId && {
             author: {
-              connect: { id: postData.authorId },
+              connect: { id: userId },
             },
           }),
           ...(tagsConnect && { tags: tagsConnect }),

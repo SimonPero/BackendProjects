@@ -1,18 +1,18 @@
 import { Hono } from "hono";
 import { PostsService } from "../services/posts.service";
-import { Bindings } from "index";
+import { Bindings, Variables } from "index";
 import { z } from "zod";
 import { CreatePostDTO } from "types/dto";
 import { Post } from "@prisma/client";
+import authMiddleware from "middleware";
 
-const PostsRouter = new Hono<{ Bindings: Bindings }>();
+const PostsRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 // Validation schemas
 const createPostSchema = z.object({
   title: z.string().min(1, "Title is required"),
   Content: z.string().min(1, "Content is required"),
   category: z.string(),
-  authorId: z.number(),
   tags: z.array(z.string()).default([]),
 });
 
@@ -22,13 +22,14 @@ const idParamSchema = z.object({
   id: z.string().transform((val) => parseInt(val, 10)),
 });
 
-PostsRouter.post("/posts", async (c) => {
+PostsRouter.post("/posts", authMiddleware, async (c) => {
   const postsService = new PostsService(c.env.DB);
   const body: CreatePostDTO = await c.req.json();
+  const user = c.get("user");
 
   try {
     const validatedData = createPostSchema.parse(body);
-    const post: Post = await postsService.createPost(validatedData);
+    const post: Post = await postsService.createPost(user.id, validatedData);
     return c.json(post, 201);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -65,7 +66,7 @@ PostsRouter.get("/posts/:id", async (c) => {
       return c.json({ error: "Post not found" }, 404);
     }
 
-    return c.json(post);
+    return c.json(post, 200);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({ error: "Invalid ID format" }, 400);
@@ -75,8 +76,9 @@ PostsRouter.get("/posts/:id", async (c) => {
   }
 });
 
-PostsRouter.put("/posts/:id", async (c) => {
+PostsRouter.put("/posts/:id", authMiddleware, async (c) => {
   const postsService = new PostsService(c.env.DB);
+  const user = c.get("user");
 
   try {
     const { id } = idParamSchema.parse({ id: c.req.param("id") });
@@ -87,8 +89,16 @@ PostsRouter.put("/posts/:id", async (c) => {
       return c.json({ error: "Post not found" }, 404);
     }
 
-    const updatedPost: Post = await postsService.updatePost(id, validatedData);
-    return c.json(updatedPost);
+    if (existingPost.authorId !== user.id) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const updatedPost: Post = await postsService.updatePost(
+      id,
+      user.id,
+      validatedData
+    );
+    return c.json(updatedPost, 200);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({ error: "Invalid input", details: error.errors }, 400);
@@ -98,9 +108,9 @@ PostsRouter.put("/posts/:id", async (c) => {
   }
 });
 
-PostsRouter.delete("/posts/:id", async (c) => {
+PostsRouter.delete("/posts/:id", authMiddleware, async (c) => {
   const postsService = new PostsService(c.env.DB);
-
+  const user = c.get("user");
   try {
     const { id } = idParamSchema.parse({ id: c.req.param("id") });
 
@@ -109,8 +119,12 @@ PostsRouter.delete("/posts/:id", async (c) => {
       return c.json({ error: "Post not found" }, 404);
     }
 
+    if (existingPost.authorId !== user.id) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
     await postsService.deletePost(id);
-    return c.json({}, 204);
+    return c.json({status: 204});
   } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({ error: "Invalid ID format" }, 400);
