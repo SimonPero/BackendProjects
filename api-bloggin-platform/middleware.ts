@@ -2,12 +2,13 @@ import { UserService } from "services/users.service";
 import { Context, Next } from "hono";
 import { getSignedCookie } from "hono/cookie";
 
-const SECRET = "xm2lGWxpRhQipatfYLFj9qsVWVxDK8cppJpiafUq3SuLTZC4SuTm8Ap8lLYg2ylr";
+const SECRET =
+  "xm2lGWxpRhQipatfYLFj9qsVWVxDK8cppJpiafUq3SuLTZC4SuTm8Ap8lLYg2ylr";
 
 export default async function authMiddleware(c: Context, next: Next) {
   try {
     const userId = await getSignedCookie(c, SECRET, "auth");
-    
+
     if (!userId) {
       return c.json({ error: "Unauthorized" }, 401);
     }

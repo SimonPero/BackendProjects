@@ -1,12 +1,18 @@
 import { Hono } from "hono";
-import { setSignedCookie, deleteCookie, getSignedCookie, getCookie } from "hono/cookie";
+import {
+  setSignedCookie,
+  deleteCookie,
+  getSignedCookie,
+  getCookie,
+} from "hono/cookie";
 import { Bindings, Variables } from "index";
 import authMiddleware from "middleware";
 import AuthService from "services/auth.service";
 import { UserService } from "services/users.service";
 
 const AuthRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
-const SECRET = "xm2lGWxpRhQipatfYLFj9qsVWVxDK8cppJpiafUq3SuLTZC4SuTm8Ap8lLYg2ylr";
+const SECRET =
+  "xm2lGWxpRhQipatfYLFj9qsVWVxDK8cppJpiafUq3SuLTZC4SuTm8Ap8lLYg2ylr";
 AuthRouter.post("/login", async (c) => {
   try {
     const { email, password } = await c.req.json();
@@ -35,23 +41,23 @@ AuthRouter.post("/login", async (c) => {
 
     await setSignedCookie(c, "auth", userFound.id.toString(), SECRET, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       path: "/",
       maxAge: 60 * 60 * 24,
-      sameSite: "Lax"
+      sameSite: "Lax",
     });
 
-    const cookieHeader = getCookie(c, "auth")
-    console.log(cookieHeader)
+    const cookieHeader = getCookie(c, "auth");
+    console.log(cookieHeader);
     return c.json({
       success: true,
       user: {
         id: userFound.id,
-        email: userFound.email
+        email: userFound.email,
       },
       debug: {
-        cookieHeader
-      }
+        cookieHeader,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -60,21 +66,21 @@ AuthRouter.post("/login", async (c) => {
 });
 
 AuthRouter.get("/debug-cookie", async (c) => {
-  const cookieHeader = c.req.header('Cookie');
-  const rawAuthCookie = getCookie(c, "auth")
+  const cookieHeader = c.req.header("Cookie");
+  const rawAuthCookie = getCookie(c, "auth");
   let verifiedUserId = null;
-  
+
   try {
-    verifiedUserId = await getSignedCookie(c, SECRET, 'auth');
+    verifiedUserId = await getSignedCookie(c, SECRET, "auth");
   } catch (error) {
-    console.error('Cookie verification failed:', error);
+    console.error("Cookie verification failed:", error);
   }
 
   return c.json({
     cookieHeader,
     rawAuthCookie,
     verifiedUserId,
-    isValid: !!verifiedUserId
+    isValid: !!verifiedUserId,
   });
 });
 

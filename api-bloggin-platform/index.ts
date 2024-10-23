@@ -7,7 +7,7 @@ export interface Bindings {
   DB: D1Database;
 }
 export type Variables = {
-  user: Omit<User, 'password'>;
+  user: Omit<User, "password">;
 };
 
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>().basePath(
@@ -15,7 +15,7 @@ const app = new Hono<{ Bindings: Bindings; Variables: Variables }>().basePath(
 );
 
 app.route("/users", UserRouter);
-app.route("/auth", AuthRouter)
+app.route("/auth", AuthRouter);
 app.route("/articles", PostsRouter);
 
 export default app;

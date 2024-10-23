@@ -46,7 +46,7 @@ export class UserService {
   }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    console.log(data.password)
+    console.log(data.password);
     const hashedPassword = await this.hashPassword(data.password);
     return this.prisma.user.create({
       data: {
@@ -65,7 +65,6 @@ export class UserService {
       data: {
         ...{
           ...(userData.name && { name: userData.name }),
-          ...(userData.email && { email: userData.email }),
         },
       },
       include: { posts: { select: { id: true } } },

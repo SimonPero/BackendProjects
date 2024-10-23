@@ -124,7 +124,7 @@ PostsRouter.delete("/posts/:id", authMiddleware, async (c) => {
     }
 
     await postsService.deletePost(id);
-    return c.json({status: 204});
+    return c.json({ status: 204 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return c.json({ error: "Invalid ID format" }, 400);

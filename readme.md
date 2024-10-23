@@ -42,11 +42,9 @@
 
 ---
 
-## Blogging Platform API - JavaScript
+## Blogging Platform API - TypeScript
 
-- [Blogging Platform API](./api-bloggin-platform/)
-- Api
+- [Blogging Platform API](./api-blogging-platform/)
+- description: A serverless blogging platform API built with Cloudflare Workers, TypeScript, Prisma ORM, and Hono for managing users, authentication, and blog posts with Zod-based input validation.
 - idea from [RoadMap.sh](https://roadmap.sh/projects/blogging-platform-api)
-
----
 
