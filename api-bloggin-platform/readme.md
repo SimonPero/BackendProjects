@@ -1,5 +1,5 @@
 # Blogging Platform API
-
+- Postman Documentation : [Doc](https://documenter.getpostman.com/view/27311000/2sAY4rDQJG)
 - idea from [RoadMap.sh](https://roadmap.sh/projects/blogging-platform-api)
 
 This project is a **Blogging Platform API** built with the following stack:
