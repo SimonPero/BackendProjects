@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { Bindings, Variables } from "index";
 import authMiddleware from "middleware";
 import { UserService } from "services/users.service";
+import AuthService from "services/auth.service";
 import { CreateUserDto } from "types/dto";
 import { z } from "zod";
 const UserRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
@@ -56,9 +57,12 @@ UserRouter.get("", async (c) => {
 
 UserRouter.post("", async (c) => {
   const userService = new UserService(c.env.DB);
+  const authService = new AuthService();
+
   const body: CreateUserDto = await c.req.json();
   try {
     const validatedData = createUserSchema.parse(body);
+    validatedData.password = await authService.hashPassword(validatedData.password)
     const user: User = await userService.createUser(validatedData);
     return c.json(user, 201);
   } catch (error) {

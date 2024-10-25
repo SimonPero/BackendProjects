@@ -12,13 +12,6 @@ export class UserService {
     this.prisma = new PrismaClient({ adapter }) as unknown as PrismaClient;
   }
 
-  private async hashPassword(password: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest("SHA-256", data);
-    return btoa(String.fromCharCode(...new Uint8Array(hash)));
-  }
-
   async getAllUsers(): Promise<User[]> {
     return this.prisma.user.findMany({ include: { posts: true } });
   }
@@ -46,16 +39,16 @@ export class UserService {
   }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    console.log(data.password);
-    const hashedPassword = await this.hashPassword(data.password);
+
     return this.prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
-        password: hashedPassword,
+        password: data.password,
       },
     });
   }
+  
   async updateUser(
     id: number,
     userData: Partial<CreateUserDto>
