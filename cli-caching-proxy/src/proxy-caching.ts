@@ -1,42 +1,45 @@
-import { Command } from 'commander';
-
-
-interface ProxyOptions {
-  port: number;
-  url: string;
-  cleanCache: string;
-}
+import { Command } from "commander";
+import FileManager from "./FileManager";
+import { urlSplitter } from "../utils/UrlSplitter";
+const fileManager = new FileManager();
 
 const program = new Command();
-
 program
-  .name('proxy-caching')
-  .requiredOption('-p, --port <port>', 'must have a port', parseInt)
-  .requiredOption('-u, --url <url>', 'must have a url')
-  .option('-c, --clean-cache <url>', 'must have a cache url')
+  .name("proxy-caching")
+  .option("-p, --port <port>", "must have a port", parseInt)
+  .option("-u, --url <url>", "must have a url")
+  .option("-c, --clean-cache <url>", "must have a cache url")
   .parse(process.argv);
 
-const options = program.opts() as ProxyOptions;
-console.log(options)
+const options = program.opts();
 
-// Validate port number
-if (isNaN(options.port)) {
-  console.error('Error: Port must be a number');
-  process.exit(1);
+async function handleCleanCache(url: string) {
+  const hostName = urlSplitter(url);
+  if (!hostName) return;
+  const access = await fileManager.readFile(hostName[1]);
+  if (!access) return console.log("File does not exist.");
+  await fileManager.deleteFile(hostName[1]);
+  console.log(`File ${hostName[1]} found and deleted.`);
 }
 
-// Validate URLs
-try {
-  console.log(options.url)
-} catch (error) {
-  console.error('Error: Invalid URL format');
-  process.exit(1);
+async function handleWriteCache(url: string) {
+  const hostName = urlSplitter(url);
+  if (!hostName) return;
+  const access = await fileManager.readFile(hostName[1]);
+  if (access)
+    return console.log(`Cache file for ${hostName[1]} already exists.`);
+  await fileManager.writeFile(hostName[1], []);
+  console.log(`Cache file for ${hostName} created.`);
 }
 
-console.log('Configuration:', {
-  port: options.port,
-  url: options.url,
-  cleanCache: options.cleanCache
-});
-
-// Your proxy logic here
+(async () => {
+  if (!options.port && !options.url && options.cleanCache) {
+    await handleCleanCache(options.cleanCache);
+  } else if (options.port && options.url && !options.cleanCache) {
+    await handleWriteCache(options.url);
+  } else {
+    console.log(
+      "Invalid options. Please specify either `--port <port> --url <url>` or `--clean-cache <url>`."
+    );
+  }
+})();
