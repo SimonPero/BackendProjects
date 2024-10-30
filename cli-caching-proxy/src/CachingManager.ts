@@ -1,6 +1,6 @@
 import { CacheEntry } from "../utils/types/CacheEntry";
 
-export default class CachingLogic {
+export default class CachingManager {
   private readonly MAX_CACHE_SIZE = 20;
   private readonly STALENESS_THRESHOLD = 24 * 60 * 60 * 1000; // 1 day
   private readonly SCORE_THRESHOLD = 0.8;
@@ -18,14 +18,20 @@ export default class CachingLogic {
   ]);
 
   private calculateScore(entry: CacheEntry): number {
-    const age = Date.now() - entry.creation_time.getTime();
-    const staleness = Date.now() - entry.last_access_time.getTime();
+    const lastTime = new Date(entry.last_access_time).getTime();
+    const staleness = Date.now() - lastTime;
     const weight1 = 0.7;
     const weight2 = 0.3;
 
-    return staleness * weight1 + (1 / (entry.hits + 1)) * weight2;
-  }
+    const normalizedStaleness = Math.min(
+      staleness / this.STALENESS_THRESHOLD,
+      1
+    );
+    const frequencyScore = 1 / (entry.hits + 1);
+    const score = normalizedStaleness * weight1 + frequencyScore * weight2;
 
+    return score;
+  }
   private determineTTL(contentType: string, method: string): number {
     if (this.TTL_DEFAULTS.get(method) === 0) {
       return 0;
@@ -44,56 +50,46 @@ export default class CachingLogic {
   }
 
   async addToCache(
-    cache: Array<CacheEntry>,
+    cacheData: CacheEntry[],
     method: string,
-    request: string,
-    res: any,
-    contentType: string
-  ): Promise<Array<CacheEntry>> {
-    const newEntry: CacheEntry = {
-      method,
-      request,
-      res,
-      hits: 1,
-      creation_time: new Date(),
-      last_access_time: new Date(),
-      ttl: new Date(Date.now() + this.determineTTL(contentType, method)),
-    };
+    requestUrl: string,
+    response: Response,
+    mimeType: string
+  ): Promise<CacheEntry[]> {
+    try {
+      const ttlMillis = this.determineTTL(mimeType, method);
 
-    const existingIndex = cache.findIndex(
-      (entry) => entry.method === method && entry.request === request
-    );
+      const responseBody = await response.clone().text();
+      const responseHeaders = Array.from(response.headers.entries()).reduce(
+        (headers: Record<string, string>, [key, value]) => {
+          headers[key] = value;
+          return headers;
+        },
+        {}
+      );
 
-    if (existingIndex !== -1) {
-      cache[existingIndex] = {
-        ...newEntry,
-        hits: cache[existingIndex].hits + 1,
+      const cacheEntry: CacheEntry = {
+        method,
+        request: requestUrl,
+        res: {
+          status: response.status,
+          statusText: response.statusText,
+          headers: responseHeaders,
+          body: responseBody,
+          mimeType,
+        },
+        hits: 0,
+        creation_time: new Date(),
+        last_access_time: new Date(),
+        ttl: new Date(Date.now() + ttlMillis),
       };
-      return cache;
+
+      cacheData.push(cacheEntry);
+      return cacheData;
+    } catch (error) {
+      console.error("Error adding to cache:", error);
+      return cacheData;
     }
-
-    if (cache.length >= this.MAX_CACHE_SIZE) {
-      await this.batchEvict(cache);
-      if (cache.length >= this.MAX_CACHE_SIZE) {
-        let worstScore = -1;
-        let worstIndex = -1;
-
-        cache.forEach((entry, index) => {
-          const score = this.calculateScore(entry);
-          if (score > worstScore) {
-            worstScore = score;
-            worstIndex = index;
-          }
-        });
-
-        if (worstIndex !== -1) {
-          cache.splice(worstIndex, 1);
-        }
-      }
-    }
-
-    cache.push(newEntry);
-    return cache;
   }
 
   async evictFromCache(
@@ -109,10 +105,25 @@ export default class CachingLogic {
   async batchEvict(cache: Array<CacheEntry>): Promise<Array<CacheEntry>> {
     const now = Date.now();
     return cache.filter((entry) => {
-      // Keep entry if ALL conditions are met
+      const ttlTime = new Date(entry.ttl).getTime();
+      const lastAccessTime = new Date(entry.last_access_time).getTime();
+
+      console.log(`TTL valid: ${ttlTime > now}`);
+      console.log(
+        `Within staleness threshold: ${
+          now - lastAccessTime <= this.STALENESS_THRESHOLD
+        }`
+      );
+      console.log(
+        `Score within threshold: ${
+          this.calculateScore(entry) <= this.SCORE_THRESHOLD
+        }`
+      );
+
+      // Keep entry if all conditions are met
       return (
-        entry.ttl.getTime() > now &&
-        now - entry.last_access_time.getTime() <= this.STALENESS_THRESHOLD &&
+        ttlTime > now &&
+        now - lastAccessTime <= this.STALENESS_THRESHOLD &&
         this.calculateScore(entry) <= this.SCORE_THRESHOLD
       );
     });
@@ -130,8 +141,8 @@ export default class CachingLogic {
     if (!entry) {
       return null;
     }
-
-    if (entry.ttl.getTime() <= Date.now()) {
+    const entryDate = new Date(entry.ttl).getTime();
+    if (entryDate <= Date.now()) {
       await this.evictFromCache(cache, method, request);
       return null;
     }

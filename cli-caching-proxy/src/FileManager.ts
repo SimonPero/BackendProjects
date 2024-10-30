@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-
+import { CacheEntry } from "../utils/types/CacheEntry";
 export default class FileManager {
   private directory = "caches/";
 
@@ -16,19 +16,21 @@ export default class FileManager {
     }
   }
 
-  async writeFile(fileName: string, data: Array<object>): Promise<void> {
+  async writeFile(fileName: string, data: Array<CacheEntry>): Promise<void> {
     const path = this.getFilePath(fileName);
     try {
-      await fs.access(path);
+      await fs.access(this.directory);
     } catch (error: any) {
       if (error.code === "ENOENT") {
         await fs.mkdir(this.directory, { recursive: true });
-      } else throw new Error("Error writing file");
+      } else {
+        throw new Error(`Error writing file: ${error.message}`);
+      }
     }
     await fs.writeFile(path, JSON.stringify(data));
   }
 
-  async readFile(fileName: string): Promise<Array<object> | boolean> {
+  async readFile(fileName: string): Promise<Array<CacheEntry> | boolean> {
     const path = this.getFilePath(fileName);
     try {
       const data = await fs.readFile(path, "utf8");
