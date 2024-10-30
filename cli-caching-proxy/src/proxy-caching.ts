@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import FileManager from "./FileManager";
 import { urlSplitter } from "../utils/UrlSplitter";
+import startProxyServer from "./ProxyServer";
 const fileManager = new FileManager();
 
 const program = new Command();
@@ -26,8 +27,7 @@ async function handleWriteCache(url: string) {
   const hostName = urlSplitter(url);
   if (!hostName) return;
   const access = await fileManager.readFile(hostName[1]);
-  if (access)
-    return console.log(`Cache file for ${hostName[1]} already exists.`);
+  if (access) return console.log(`Cache file for ${hostName[1]} already exists.`);
   await fileManager.writeFile(hostName[1], []);
   console.log(`Cache file for ${hostName} created.`);
 }
@@ -37,6 +37,7 @@ async function handleWriteCache(url: string) {
     await handleCleanCache(options.cleanCache);
   } else if (options.port && options.url && !options.cleanCache) {
     await handleWriteCache(options.url);
+    startProxyServer(options.port, options.url);
   } else {
     console.log(
       "Invalid options. Please specify either `--port <port> --url <url>` or `--clean-cache <url>`."
