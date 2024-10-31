@@ -54,5 +54,5 @@
 ## Caching Proxy - TypeScript
 
 - [Caching Proxy](./cli-caching-proxy/)
-- description: A serverless blogging platform API built with Cloudflare Workers, TypeScript, Prisma ORM, and Hono for managing users, authentication, and blog posts with Zod-based input validation.
+- description: cli starting proxy server for caching made with nodes.js commander typescript and express.js, it caches almost everytype of thing but it works best with json apis
 - idea from [RoadMap.sh](https://roadmap.sh/projects/caching-server)
