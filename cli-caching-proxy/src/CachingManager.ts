@@ -85,6 +85,24 @@ export default class CachingManager {
       };
 
       cacheData.push(cacheEntry);
+
+      if (cacheData.length > this.MAX_CACHE_SIZE) {
+        cacheData = await this.batchEvict(cacheData);
+
+        if (cacheData.length > this.MAX_CACHE_SIZE) {
+          const lowestScoreEntry = cacheData.reduce((lowest, entry) => {
+            return this.calculateScore(entry) < this.calculateScore(lowest)
+              ? entry
+              : lowest;
+          });
+
+          cacheData = await this.evictFromCache(
+            cacheData,
+            lowestScoreEntry.method,
+            lowestScoreEntry.request
+          );
+        }
+      }
       return cacheData;
     } catch (error) {
       console.error("Error adding to cache:", error);
