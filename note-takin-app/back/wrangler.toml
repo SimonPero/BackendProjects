@@ -1,0 +1,9 @@
+name = "note-taking-app"
+main = "src/index.ts"
+compatibility_date = "2024-10-22"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "taking-notes-db"
+database_id = "0a909932-ca45-4b89-b702-0fe949238d4f"
