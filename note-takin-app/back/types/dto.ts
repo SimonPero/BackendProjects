@@ -1,8 +1,8 @@
-export interface CreatePostDTO {
+export interface CreateNoteDTO {
+  noteId:string;
   title: string;
-  Content: string;
-  category: string;
-  tags: string[];
+  content:string;
+  userId: number;
 }
 
 export interface CreateUserDto {
