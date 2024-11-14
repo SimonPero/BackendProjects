@@ -39,7 +39,7 @@ UserRouter.get('/:id', async (c) => {
 	}
 });
 
-UserRouter.get('', async (c) => {
+UserRouter.get('/', async (c) => {
 	const userService = new UserService(c.env.DB);
 	try {
 		const users: User[] = await userService.getAllUsers();
@@ -53,7 +53,7 @@ UserRouter.get('', async (c) => {
 	}
 });
 
-UserRouter.post('', async (c) => {
+UserRouter.post('/', async (c) => {
 	const userService = new UserService(c.env.DB);
 	const authService = new AuthService();
 

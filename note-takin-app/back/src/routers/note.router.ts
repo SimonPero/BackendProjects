@@ -26,7 +26,7 @@ NoteRouter.post('/', async (c) => {
 			...validatedData,
 			noteId: crypto.randomUUID(),
 		};
-		const notes = noteService.createNote(noteData);
+		const notes = await noteService.createNote(noteData);
 
 		return c.json(notes, 200);
 	} catch (error) {
@@ -41,7 +41,7 @@ NoteRouter.get('/', async (c) => {
 	const noteService = new NotesService(c.env.DB);
 
 	try {
-		const notes = noteService.getAllNotes();
+		const notes = await noteService.getAllNotes();
 		return c.json(notes, 200);
 	} catch (error) {
 		console.error(error);
@@ -112,6 +112,8 @@ NoteRouter.put('/:id', authMiddleware, async (c) => {
 	}
 });
 
-NoteRouter.get('/check/:id');
+NoteRouter.get('/check/:id', async (c) => {
+	return c.json({ dou: 'dou' });
+});
 
 export default NoteRouter;
