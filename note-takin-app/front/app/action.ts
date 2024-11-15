@@ -5,27 +5,24 @@ import { usersApi } from "@/api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export async function registerUser(user: CreateUserDto) {
   try {
     const data: UserDto = await usersApi.createUser(user);
-    console.log(data);
-    redirect("/user/login");
+    return data;
   } catch (error) {
-    redirect("/error");
+    return error;
   }
 }
 
 export async function loginUser(email: string, password: string) {
-  try {
-    console.log(email, password);
-    const data: AuthDto = await authApi.logIn(email, password);
-    console.log(data);
-    redirect("/");
-  } catch (error) {
-    redirect("/error");
-  }
+  const data: AuthDto = await authApi.logIn(email, password);
+  return data;
+}
+
+export async function logOutUser() {
+  const data = await authApi.logOut();
+  return data;
 }
 
 export async function getAuthCookie() {

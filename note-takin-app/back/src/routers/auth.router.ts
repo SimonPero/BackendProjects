@@ -32,14 +32,14 @@ AuthRouter.post('/login', async (c) => {
 
 		await setSignedCookie(c, 'auth', userFound.id.toString(), SECRET, {
 			httpOnly: true,
-			secure: false,
+			secure: true,
 			path: '/',
 			maxAge: 60 * 60 * 24,
-			sameSite: 'Lax',
+			sameSite: 'None',
 		});
 
 		const cookieHeader = getCookie(c, 'auth');
-		console.log(cookieHeader);
+
 		return c.json({
 			success: true,
 			user: {
@@ -55,7 +55,6 @@ AuthRouter.post('/login', async (c) => {
 		return c.json({ error: 'An error occurred during login' }, 500);
 	}
 });
-
 AuthRouter.get('/debug-cookie', async (c) => {
 	const cookieHeader = c.req.header('Cookie');
 	const rawAuthCookie = getCookie(c, 'auth');

@@ -7,3 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "taking-notes-db"
 database_id = "afaae1d4-218e-427e-9cf3-f4327d33eade"
+
+[vars]
+API_URL="https://note-taking-app.simondevpero.workers.dev/api"

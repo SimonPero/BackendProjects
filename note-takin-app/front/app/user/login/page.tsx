@@ -12,13 +12,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 // Define schema for login form
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
+  password: z
+    .string()
+    .min(1, { message: "Password must be at least 8 characters." }),
 });
 
 export default function LoginPage() {
@@ -31,7 +34,8 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await loginUser(values.email, values.password); 
+    await loginUser(values.email, values.password);
+    redirect("/");
   }
 
   return (

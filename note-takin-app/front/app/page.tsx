@@ -12,8 +12,9 @@ type NoteType = {
 };
 
 export default async function Home() {
-  const notes: NoteType[] = await notesApi.getAllNotes();
   const auth = await getAuthCookie();
+
+  const notes: NoteType[] = await notesApi.getAllNotesOfUser();
 
   return (
     <section className="bg-white flex py-10 sm:py-5 flex-col">

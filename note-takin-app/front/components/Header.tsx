@@ -1,8 +1,10 @@
 import { getAuthCookie } from "@/app/action";
 import Link from "next/link";
+import LogOut from "./LogOut";
 
 export default async function Header() {
   const auth = await getAuthCookie();
+
   console.log(auth);
   return (
     <header>
@@ -13,7 +15,7 @@ export default async function Header() {
           </Link>
           <div className="flex items-center ml-auto">
             {auth ? (
-              <span className="cursor-pointer mr-3">Cerrar sesión</span>
+              <LogOut />
             ) : (
               <Link
                 className="text-gray-800 no-underline mr-3"
