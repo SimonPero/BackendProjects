@@ -80,7 +80,7 @@ AuthRouter.get('/protected', authMiddleware, (c) => {
 	return c.json({ message: `Hello ${user.name}!` });
 });
 
-AuthRouter.post('/logout', (c) => {
+AuthRouter.get('/logout', (c) => {
 	deleteCookie(c, 'auth');
 	return c.json({ success: true });
 });
