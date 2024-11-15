@@ -49,11 +49,15 @@ NoteRouter.get('/', async (c) => {
 	}
 });
 
-NoteRouter.get('/user/:userId', async (c) => {
+NoteRouter.get('/user/:userId', authMiddleware, async (c) => {
+	const user = c.get('user');
 	const userId: number = parseInt(c.req.param('userId'));
 	const noteService = new NotesService(c.env.DB);
 
 	try {
+		if (user.id !== userId) {
+			return c.json({ error: 'Unauthorized' }, 401);
+		}
 		const notes = await noteService.getAllNotesOfUser(userId);
 		return c.json(notes, 200);
 	} catch (error) {
@@ -61,7 +65,9 @@ NoteRouter.get('/user/:userId', async (c) => {
 		return c.json({ error: 'Failed to fetch notes' }, 500);
 	}
 });
-NoteRouter.get('/:id', async (c) => {
+NoteRouter.get('/:id', authMiddleware, async (c) => {
+	const user = c.get('user');
+
 	const id: string = c.req.param('id');
 	const noteService = new NotesService(c.env.DB);
 
@@ -69,6 +75,9 @@ NoteRouter.get('/:id', async (c) => {
 		const note = await noteService.getNoteById(id);
 		if (!note) {
 			throw new Error(`Failed to found the note with id ${id}`);
+		}
+		if (user.id !== note.userId) {
+			return c.json({ error: 'Unauthorized' }, 401);
 		}
 		return c.json(note, 200);
 	} catch (error) {
