@@ -16,6 +16,10 @@ export class NotesService {
 		return this.prisma.post.findMany();
 	}
 
+	async getAllNotesOfUser(userId: number): Promise<Post[]> {
+		return this.prisma.post.findMany({ where: { userId } });
+	}
+
 	async getNoteById(id: string): Promise<Post | null> {
 		return this.prisma.post.findUnique({ where: { id } });
 	}

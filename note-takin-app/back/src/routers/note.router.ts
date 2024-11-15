@@ -48,6 +48,19 @@ NoteRouter.get('/', async (c) => {
 		return c.json({ error: 'Failed to fetch notes' }, 500);
 	}
 });
+
+NoteRouter.get('/user/:userId', async (c) => {
+	const userId: number = parseInt(c.req.param('userId'));
+	const noteService = new NotesService(c.env.DB);
+
+	try {
+		const notes = await noteService.getAllNotesOfUser(userId);
+		return c.json(notes, 200);
+	} catch (error) {
+		console.error(error);
+		return c.json({ error: 'Failed to fetch notes' }, 500);
+	}
+});
 NoteRouter.get('/:id', async (c) => {
 	const id: string = c.req.param('id');
 	const noteService = new NotesService(c.env.DB);
