@@ -1,26 +1,26 @@
-import { cookies } from "next/headers";
+import { getAuthCookie } from "@/app/action";
+import Link from "next/link";
 
 export default async function Header() {
-  const cookieStore = await cookies();
-  const auth = cookieStore.get("auth");
+  const auth = await getAuthCookie();
   console.log(auth);
   return (
     <header>
       <nav className="bg-gray-200">
         <div className="container mx-auto flex items-center justify-between p-4">
-          <a className="font-bold text-lg" href="./home.html">
+          <Link className="font-bold text-lg" href={"/"}>
             Logo
-          </a>
+          </Link>
           <div className="flex items-center ml-auto">
             {auth ? (
               <span className="cursor-pointer mr-3">Cerrar sesión</span>
             ) : (
-              <a
+              <Link
                 className="text-gray-800 no-underline mr-3"
-                href="./login.html"
+                href={"/user/login"}
               >
                 <span className="cursor-pointer">Iniciar sesión</span>
-              </a>
+              </Link>
             )}
             <div className="relative mr-3">
               <div className="flex" role="search">
@@ -46,7 +46,10 @@ export default async function Header() {
                 </svg>
               </div>
             </div>
-            <a href="notes.html" className="text-gray-800 no-underline mr-3">
+            <Link
+              href="/note/create"
+              className="text-gray-800 no-underline mr-3"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -61,7 +64,7 @@ export default async function Header() {
                   d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
                 />
               </svg>
-            </a>
+            </Link>
             <button
               className="navbar-toggler mr-3"
               type="button"
