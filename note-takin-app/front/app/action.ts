@@ -1,6 +1,7 @@
 "use server";
 
 import { authApi } from "@/api/auth.api";
+import { notesApi } from "@/api/notes.api";
 import { usersApi } from "@/api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";
@@ -29,4 +30,9 @@ export async function getAuthCookie() {
   const cookieStore = cookies();
   const auth = (await cookieStore).get("auth");
   return auth;
+}
+
+export async function deleteNote(id: string) {
+  const data = await notesApi.deleteNote(id);
+  return data;
 }

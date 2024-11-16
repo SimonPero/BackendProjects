@@ -5,3 +5,9 @@ export type NoteDto = {
   updatedAt: string;
   content: string;
 };
+
+export type CreateNoteDto = {
+  title: string;
+  content: string;
+  userId: number;
+};
