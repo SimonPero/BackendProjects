@@ -27,6 +27,9 @@ class AuthApi {
       const cookieParts = setCookieHeader.split(";").map((part) => part.trim());
       const [cookieName, cookieValue] = cookieParts[0].split("=");
 
+      // Decode the cookie value to remove URL encoding
+      const decodedValue = decodeURIComponent(cookieValue);
+
       const maxAge = cookieParts
         .find((part) => part.toLowerCase().startsWith("max-age="))
         ?.split("=")[1];
@@ -37,7 +40,8 @@ class AuthApi {
         ?.split("=")[1];
 
       const cookieStore = await cookies();
-      cookieStore.set(cookieName, cookieValue, {
+      cookieStore.set(cookieName, decodedValue, {
+        // Remove the extra "=" and use decoded value
         secure,
         httpOnly,
         sameSite:
