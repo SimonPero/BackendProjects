@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -51,11 +52,11 @@ export default function Page() {
   }
 
   return (
-    <div className="flex justify-center p-2 my-2">
+    <div className="justify-self-center flex-col p-2 my-2 w-[20rem]">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-2 w-[20rem] flex  flex-col items-center"
+          className="space-y-2 flex  flex-col items-center"
         >
           <FormField
             control={form.control}
@@ -117,6 +118,10 @@ export default function Page() {
           </Button>
         </form>
       </Form>
+      <div className="border-t my-4"></div>
+      <Link href={"/user/login"} className="text-blue-500 hover:underline">
+        Already have an account? Login in here
+      </Link>
     </div>
   );
 }
