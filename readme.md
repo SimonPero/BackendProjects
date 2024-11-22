@@ -56,3 +56,10 @@
 - [Caching Proxy](./cli-caching-proxy/)
 - description: cli starting proxy server for caching made with nodes.js commander typescript and express.js, it caches almost everytype of thing but it works best with json apis
 - idea from [RoadMap.sh](https://roadmap.sh/projects/caching-server)
+
+### Taking Notes App - TypeScript
+
+- [Taking Notes App](./note-takin-app/)
+- **Description**: A Markdown-based note-taking app with a **Hono + Cloudflare Workers** backend and a **Next.js** frontend. Features multi-user login, note creation, viewing, and deletion.  
+
+- **Idea From**: [RoadMap.sh](https://roadmap.sh/projects/markdown-note-taking-app)
