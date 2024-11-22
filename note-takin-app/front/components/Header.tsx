@@ -1,6 +1,7 @@
 import { getAuthCookie } from "@/app/action";
 import Link from "next/link";
 import LogOut from "./LogOut";
+import { PencilLine } from "lucide-react";
 
 export default async function Header() {
   const auth = await getAuthCookie();
@@ -11,19 +12,9 @@ export default async function Header() {
       <nav className="bg-gray-200">
         <div className="container mx-auto flex items-center justify-between p-4">
           <Link className="font-bold text-lg" href={"/"}>
-            Logo
+            NoteTaking
           </Link>
           <div className="flex items-center ml-auto">
-            {auth ? (
-              <LogOut />
-            ) : (
-              <Link
-                className="text-gray-800 no-underline mr-3"
-                href={"/user/login"}
-              >
-                <span className="cursor-pointer">Iniciar sesión</span>
-              </Link>
-            )}
             <div className="relative mr-3">
               <div className="flex" role="search">
                 <input
@@ -50,35 +41,21 @@ export default async function Header() {
             </div>
             <Link
               href="/note/create"
-              className="text-gray-800 no-underline mr-3"
+              className="mr-3 p-2 hover:shadow-md hover:shadow-stone-950"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                />
-              </svg>
+              <PencilLine className="size-6" />
             </Link>
-            <button
-              className="navbar-toggler mr-3"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarScroll"
-              aria-controls="navbarScroll"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
           </div>
+          {auth ? (
+            <LogOut />
+          ) : (
+            <Link
+              className="text-gray-800 no-underline mr-3"
+              href={"/user/login"}
+            >
+              <span className="cursor-pointer">Iniciar sesión</span>
+            </Link>
+          )}
         </div>
       </nav>
     </header>
