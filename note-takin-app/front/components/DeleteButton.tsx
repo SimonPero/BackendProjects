@@ -11,7 +11,7 @@ export default function DeleteButton({ id }: { id: string }) {
   return (
     <Trash2
       onClick={handleClick}
-      className="bg-red-500 hover:bg-red-700 cursor-pointer"
+      color="#ff0000"
     />
   );
 }

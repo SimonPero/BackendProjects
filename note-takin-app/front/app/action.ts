@@ -4,8 +4,9 @@ import { authApi } from "@/api/auth.api";
 import { notesApi } from "@/api/notes.api";
 import { usersApi } from "@/api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
-import { CreateNoteDto, NoteDto } from "@/types/dto/note.dto";
+import { NoteDto } from "@/types/dto/note.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";
+import Fuse from "fuse.js";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -57,4 +58,30 @@ export async function createNote({
     userId: id,
   });
   redirect(`/note/${data.id}`);
+}
+
+export async function searchNotes(notes: NoteDto[], searchQuery: string) {
+  if (searchQuery.trim() !== "") {
+    const fuse = new Fuse(notes, {
+      keys: ["title", "content"],
+      threshold: 0.3,
+    });
+    const results = fuse.search(searchQuery).map((result) => result.item);
+
+    const cookieStore = await cookies();
+
+    cookieStore.set("searchResults", JSON.stringify(results), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60,
+      path: "/",
+    });
+  }
+  redirect("/");
+}
+
+export async function deleteSearchCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete("searchResults");
 }

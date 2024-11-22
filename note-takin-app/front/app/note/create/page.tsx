@@ -52,7 +52,7 @@ export default function Page() {
               <FormItem className="w-full">
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Put your username here!" {...field} />
+                  <Input placeholder="Put a title here!" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -64,10 +64,10 @@ export default function Page() {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormLabel>Content</FormLabel>
-                <FormControl>
+                <FormControl className="max-h-4/5">
                   <Textarea
-                    placeholder="Write anything you want as if was a md file!"
-                    className="resize-none"
+                    placeholder="Write anything you want as if it were a Markdown file!"
+                    className="w-full p-2 border rounded h-[30vh] resize-none"
                     {...field}
                   />
                 </FormControl>
