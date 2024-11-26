@@ -5,6 +5,7 @@ import { CreateNoteDTO } from '../../types/dto';
 import { z } from 'zod';
 import authMiddleware from '../middlewares/authMiddleware';
 import { NotesService } from '../services/notes.service';
+import { spellChecker } from '../services/grammar.service';
 
 const NoteRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -12,6 +13,12 @@ const createNoteSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
 	content: z.string().min(1, 'File content is required'),
 	userId: z.number().min(1, 'userId is required'),
+});
+const grammarNoteSchema = z.object({
+	text: z.string().min(1, 'text to check is required'),
+	language: z.enum(['es', 'en'], {
+		errorMap: () => ({ message: 'Language must be either "es" or "en"' }),
+	}),
 });
 
 const updateNoteSchema = createNoteSchema.partial();
@@ -134,8 +141,28 @@ NoteRouter.put('/:id', authMiddleware, async (c) => {
 	}
 });
 
-NoteRouter.get('/check/:id', async (c) => {
-	return c.json({ dou: 'dou' });
+NoteRouter.post('/check', async (c) => {
+	try {
+		console.log('u');
+		const body: CreateNoteDTO = await c.req.json();
+		const { language, text } = grammarNoteSchema.parse(body);
+
+		if (!text || !['en', 'es'].includes(language)) {
+			return c.json({ error: 'Invalid input' }, 400);
+		}
+		console.log('dou');
+		const corrections = await spellChecker.checkSpelling(text, language);
+		return c.json(
+			{
+				text,
+				corrections,
+			},
+			200
+		);
+	} catch (error) {
+		console.error('Spell check error:', error);
+		return c.json({ error: 'Spell checking failed' }, 500);
+	}
 });
 
 export default NoteRouter;
