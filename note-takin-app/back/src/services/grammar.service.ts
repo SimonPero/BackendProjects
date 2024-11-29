@@ -8,14 +8,11 @@ interface DictionarySource {
 interface SpellCheckResult {
 	original: string;
 	suggestions: string[];
-	start: number;
-	end: number;
 }
 
 class SpellChecker {
-	// In-memory cache with simple expiration logic
-	private dictionaryCache: Map<string, { dictionary: Set<string>, timestamp: number }> = new Map();
-	private CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+	private dictionaryCache: Map<string, { dictionary: Set<string>; timestamp: number }> = new Map();
+	private CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
 
 	// Dictionary sources
 	private static SOURCES: DictionarySource[] = [
@@ -56,7 +53,7 @@ class SpellChecker {
 
 		// Check cache
 		const cachedEntry = this.dictionaryCache.get(cacheKey);
-		if (cachedEntry && (now - cachedEntry.timestamp) < this.CACHE_TTL) {
+		if (cachedEntry && now - cachedEntry.timestamp < this.CACHE_TTL) {
 			return cachedEntry.dictionary;
 		}
 
@@ -64,7 +61,7 @@ class SpellChecker {
 		const dictionary = await this.fetchDictionary(language);
 		this.dictionaryCache.set(cacheKey, {
 			dictionary,
-			timestamp: now
+			timestamp: now,
 		});
 
 		return dictionary;
@@ -101,14 +98,14 @@ class SpellChecker {
 	}
 
 	// Works with wagnerFischerDistance
-	private findSuggestions(word: string, dictionary: Set<string>, maxSuggestions: number = 3): string[] {
+	private findSuggestions(word: string, dictionary: Set<string>, maxSuggestions: number = 4): string[] {
 		const suggestions: Array<{ word: string; distance: number }> = [];
 		for (const dictWord of dictionary) {
 			if (Math.abs(word.length - dictWord.length) > 2) continue;
 
 			const distance = this.wagnerFischerDistance(word, dictWord);
 
-			if (distance <= 2) {
+			if (distance <= 4) {
 				suggestions.push({ word: dictWord, distance });
 			}
 		}
@@ -122,12 +119,11 @@ class SpellChecker {
 	// Main function
 	async checkSpelling(text: string, language: 'en' | 'es'): Promise<SpellCheckResult[]> {
 		const dictionary = await this.getCachedDictionary(language);
-		console.log("xd")
-		const wordRegex = /\b\w+\b/g;
+		const markdownRegex = /[#*_\[\]()\w]+/g;
 		const corrections: SpellCheckResult[] = [];
 
 		let match;
-		while ((match = wordRegex.exec(text)) !== null) {
+		while ((match = markdownRegex.exec(text)) !== null) {
 			const word = match[0].toLowerCase();
 
 			if (dictionary.has(word)) continue;
@@ -138,12 +134,9 @@ class SpellChecker {
 				corrections.push({
 					original: word,
 					suggestions,
-					start: match.index,
-					end: match.index + word.length,
 				});
 			}
 		}
-		console.log("does it?")
 		return corrections;
 	}
 }

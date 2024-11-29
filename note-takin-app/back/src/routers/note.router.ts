@@ -143,14 +143,12 @@ NoteRouter.put('/:id', authMiddleware, async (c) => {
 
 NoteRouter.post('/check', async (c) => {
 	try {
-		console.log('u');
 		const body: CreateNoteDTO = await c.req.json();
 		const { language, text } = grammarNoteSchema.parse(body);
 
 		if (!text || !['en', 'es'].includes(language)) {
 			return c.json({ error: 'Invalid input' }, 400);
 		}
-		console.log('dou');
 		const corrections = await spellChecker.checkSpelling(text, language);
 		return c.json(
 			{
