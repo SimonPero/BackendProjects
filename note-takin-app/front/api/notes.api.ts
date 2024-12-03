@@ -1,6 +1,11 @@
 import { getAuthCookie } from "@/app/action";
 import { CreateNoteDto, NoteDto } from "@/types/dto/note.dto";
 
+type CheckNote = {
+  text: string;
+  language: string;
+};
+
 class NotesApi {
   async getAllNotes(): Promise<NoteDto[]> {
     const res = await fetch(`${process.env.API_URL}/notes`);
@@ -75,6 +80,23 @@ class NotesApi {
       headers: {
         Cookie: `${auth.name}=${auth.value}`,
       },
+    });
+    const data = await res.json();
+    return data;
+  }
+
+  async checkGrammarNote(toCheck: CheckNote, id: string): Promise<NoteDto> {
+    const auth = await getAuthCookie();
+    if (!auth) {
+      throw {};
+    }
+    const res = await fetch(`${process.env.API_URL}/notes/check/${id}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Cookie: `${auth.name}=${auth.value}`,
+      },
+      body: JSON.stringify(toCheck),
     });
     const data = await res.json();
     return data;

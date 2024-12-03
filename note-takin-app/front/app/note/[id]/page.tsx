@@ -2,11 +2,15 @@ import ReactMarkdown from "react-markdown";
 import { notesApi } from "@/api/notes.api";
 import { NoteDto } from "@/types/dto/note.dto";
 import DeleteButton from "@/components/DeleteButton";
+import GrammarCheckButton from "@/components/GrammarCheckButton";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = params.id;
   const note: NoteDto = await notesApi.getNoteById(id);
-
+  const corrections = await notesApi.checkGrammarNote(
+    { text: note.content, language: "en" },
+    note.id
+  );
   return (
     <article
       key={note.id}
@@ -27,6 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <div className="flex justify-end">
         <div className="rounded p-1 border border-transparent cursor-pointer hover:border-red-900 transition duration-200 max-w-fit">
           <DeleteButton id={note.id} />
+          <GrammarCheckButton />
         </div>
       </div>
     </article>
