@@ -1,20 +1,23 @@
-// Interfaces for type safety
-interface DictionarySource {
+export interface DictionarySource {
 	name: string;
 	url: string;
 	language: 'en' | 'es';
 }
 
-interface SpellCheckResult {
+export interface SpellCheckResult {
 	original: string;
 	suggestions: string[];
 }
 
-class SpellChecker {
+export interface CheckNote {
+	text: string;
+	language: 'en' | 'es';
+}
+
+export class SpellChecker {
 	private dictionaryCache: Map<string, { dictionary: Set<string>; timestamp: number }> = new Map();
 	private CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
 
-	// Dictionary sources
 	private static SOURCES: DictionarySource[] = [
 		{
 			name: 'English WordList',
@@ -28,19 +31,26 @@ class SpellChecker {
 		},
 	];
 
-	private async fetchDictionary(language: 'en' | 'es'): Promise<Set<string>> {
+	private async fetchDictionary(language: 'en' | 'es', signal?: AbortSignal): Promise<Set<string>> {
 		const source = SpellChecker.SOURCES.find((s) => s.language === language);
 		if (!source) throw new Error(`No dictionary source for language: ${language}`);
 
 		try {
-			const response = await fetch(source.url);
-			const data: string = await response.text(); // Use .text() instead of .json()
-			return new Set(
-				data
-					.split('\n')
-					.map((word: string) => word.trim().toLowerCase())
-					.filter((word: string) => word.length > 1 && /^[a-zá-ñ]+$/.test(word))
-			);
+			const response = await fetch(source.url, {
+				signal,
+				headers: {
+					'Cache-Control': 'max-age=86400, stale-while-revalidate=604800',
+				},
+			});
+
+			const data: string = await response.text();
+			const words = data
+				.split('\n')
+				.slice(0, 50000)
+				.map((word: string) => word.trim().toLowerCase())
+				.filter((word: string) => word.length > 1 && /^[a-zá-ñ]+$/.test(word));
+
+			return new Set(words);
 		} catch (error) {
 			console.error(`Dictionary fetch failed for ${language}:`, error);
 			return new Set();
@@ -51,24 +61,32 @@ class SpellChecker {
 		const cacheKey = `dictionary_${language}`;
 		const now = Date.now();
 
-		// Check cache
 		const cachedEntry = this.dictionaryCache.get(cacheKey);
 		if (cachedEntry && now - cachedEntry.timestamp < this.CACHE_TTL) {
 			return cachedEntry.dictionary;
 		}
 
-		// Fetch and cache dictionary
-		const dictionary = await this.fetchDictionary(language);
-		this.dictionaryCache.set(cacheKey, {
-			dictionary,
-			timestamp: now,
-		});
+		try {
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
-		return dictionary;
+			const dictionary = await this.fetchDictionary(language, controller.signal);
+			clearTimeout(timeoutId);
+
+			if (dictionary.size > 0) {
+				this.dictionaryCache.set(cacheKey, {
+					dictionary,
+					timestamp: now,
+				});
+			}
+
+			return dictionary;
+		} catch (error) {
+			console.error(`Dictionary fetch failed for ${language}:`, error);
+			return this.dictionaryCache.get(cacheKey)?.dictionary ?? new Set();
+		}
 	}
 
-	// Wagner-Fischer Levenshtein Distance Algorithm
-	// Optimized for performance and memory efficiency
 	private wagnerFischerDistance(s1: string, s2: string): number {
 		if (s1.length < s2.length) {
 			return this.wagnerFischerDistance(s2, s1);
@@ -97,48 +115,66 @@ class SpellChecker {
 		return previousRow[s2.length];
 	}
 
-	// Works with wagnerFischerDistance
 	private findSuggestions(word: string, dictionary: Set<string>, maxSuggestions: number = 4): string[] {
-		const suggestions: Array<{ word: string; distance: number }> = [];
-		for (const dictWord of dictionary) {
-			if (Math.abs(word.length - dictWord.length) > 2) continue;
-
-			const distance = this.wagnerFischerDistance(word, dictWord);
-
-			if (distance <= 4) {
-				suggestions.push({ word: dictWord, distance });
-			}
+		if (dictionary.size > 100000) {
+			return [];
 		}
 
-		return suggestions
+		return Array.from(dictionary)
+			.filter((dictWord) => Math.abs(word.length - dictWord.length) <= 2)
+			.map((dictWord) => ({
+				word: dictWord,
+				distance: this.wagnerFischerDistance(word, dictWord),
+			}))
+			.filter((item) => item.distance <= 2)
 			.sort((a, b) => a.distance - b.distance)
 			.slice(0, maxSuggestions)
-			.map((s) => s.word);
+			.map((item) => item.word);
 	}
 
-	// Main function
 	async checkSpelling(text: string, language: 'en' | 'es'): Promise<SpellCheckResult[]> {
-		const dictionary = await this.getCachedDictionary(language);
-		const markdownRegex = /[#*_\[\]()\w]+/g;
-		const corrections: SpellCheckResult[] = [];
+		try {
+			const dictionary = await this.getCachedDictionary(language);
 
-		let match;
-		while ((match = markdownRegex.exec(text)) !== null) {
-			const word = match[0].toLowerCase();
+			const markdownRegex = /[#*_\[\]()\w]+/g;
+			const corrections: SpellCheckResult[] = [];
 
-			if (dictionary.has(word)) continue;
+			let match;
+			while ((match = markdownRegex.exec(text)) !== null) {
+				const word = match[0].toLowerCase();
 
-			const suggestions = this.findSuggestions(word, dictionary);
+				if (dictionary.has(word)) continue;
 
-			if (suggestions.length > 0) {
-				corrections.push({
-					original: word,
-					suggestions,
-				});
+				const suggestions = this.findSuggestions(word, dictionary);
+
+				if (suggestions.length > 0) {
+					corrections.push({
+						original: word,
+						suggestions,
+					});
+				}
 			}
+			return corrections;
+		} catch (error) {
+			console.error('Spelling check failed:', error);
+			return [];
 		}
-		return corrections;
 	}
 }
 
 export const spellChecker = new SpellChecker();
+
+export async function checkGrammarNote(toCheck: CheckNote): Promise<SpellCheckResult[]> {
+	try {
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+		const corrections = await spellChecker.checkSpelling(toCheck.text, toCheck.language || 'en');
+		console.log(corrections);
+		clearTimeout(timeoutId);
+		return corrections;
+	} catch (error) {
+		console.error('Spelling check failed:', error);
+		return [];
+	}
+}
