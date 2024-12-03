@@ -141,8 +141,13 @@ NoteRouter.put('/:id', authMiddleware, async (c) => {
 	}
 });
 
-NoteRouter.post('/check', async (c) => {
+NoteRouter.post('/check/:id', authMiddleware, async (c) => {
+	const id: string = c.req.param('id');
+	const user = c.get('user');
 	try {
+		if (parseInt(id) !== user.id) {
+			return c.json({ error: 'Unauthorized' }, 401);
+		}
 		const body: CreateNoteDTO = await c.req.json();
 		const { language, text } = grammarNoteSchema.parse(body);
 
