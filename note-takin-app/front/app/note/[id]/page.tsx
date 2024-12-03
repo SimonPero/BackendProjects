@@ -4,13 +4,19 @@ import { NoteDto } from "@/types/dto/note.dto";
 import DeleteButton from "@/components/DeleteButton";
 import GrammarCheckButton from "@/components/GrammarCheckButton";
 
+export interface SpellCheckResult {
+  original: string;
+  suggestions: string[];
+}
+
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const { id } = await params;
   const note: NoteDto = await notesApi.getNoteById(id);
-  const corrections = await notesApi.checkGrammarNote(
+  const corrections: SpellCheckResult[] = await notesApi.checkGrammarNote(
     { text: note.content, language: "en" },
-    note.id
+    note.userId.toString()
   );
+  console.log(corrections);
   return (
     <article
       key={note.id}
@@ -34,6 +40,16 @@ export default async function Page({ params }: { params: { id: string } }) {
           <GrammarCheckButton />
         </div>
       </div>
+      {corrections.length > 0 && (
+        <div>
+          {corrections.map((correction, index) => (
+            <div key={index}>
+              Misspelled: {correction.original}
+              Suggestions: {correction.suggestions.join(", ")}
+            </div>
+          ))}
+        </div>
+      )}
     </article>
   );
 }

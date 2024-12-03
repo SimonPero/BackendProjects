@@ -6,6 +6,11 @@ type CheckNote = {
   language: string;
 };
 
+export type SpellCheckResult = {
+  original: string;
+  suggestions: string[];
+};
+
 class NotesApi {
   async getAllNotes(): Promise<NoteDto[]> {
     const res = await fetch(`${process.env.API_URL}/notes`);
@@ -85,7 +90,10 @@ class NotesApi {
     return data;
   }
 
-  async checkGrammarNote(toCheck: CheckNote, id: string): Promise<NoteDto> {
+  async checkGrammarNote(
+    toCheck: CheckNote,
+    id: string
+  ): Promise<SpellCheckResult[]> {
     const auth = await getAuthCookie();
     if (!auth) {
       throw {};
@@ -95,9 +103,11 @@ class NotesApi {
       credentials: "include",
       headers: {
         Cookie: `${auth.name}=${auth.value}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(toCheck),
     });
+    console.log(res);
     const data = await res.json();
     return data;
   }

@@ -4,6 +4,7 @@ export type NoteDto = {
   createdAt: string;
   updatedAt: string;
   content: string;
+  userId: number;
 };
 
 export type CreateNoteDto = {
