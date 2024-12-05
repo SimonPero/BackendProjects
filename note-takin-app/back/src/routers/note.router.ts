@@ -5,7 +5,7 @@ import { CreateNoteDTO } from '../../types/dto';
 import { z } from 'zod';
 import authMiddleware from '../middlewares/authMiddleware';
 import { NotesService } from '../services/notes.service';
-import { spellChecker } from '../services/grammar.service';
+import { spellChecker, SpellCheckResult } from '../services/grammar.service';
 
 const NoteRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
@@ -154,8 +154,8 @@ NoteRouter.post('/check/:id', authMiddleware, async (c) => {
 		if (!text || !['en', 'es'].includes(language)) {
 			return c.json({ error: 'Invalid input' }, 400);
 		}
-		const corrections = await spellChecker.checkSpelling(text, 'en');
-		console.log(corrections);
+		const corrections: SpellCheckResult[] = await spellChecker.checkSpelling(text, 'en');
+
 		return c.json(corrections, 200);
 	} catch (error) {
 		console.error('Spell check error:', error);

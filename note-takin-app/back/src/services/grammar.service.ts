@@ -15,7 +15,7 @@ export interface CheckNote {
 }
 
 export class SpellChecker {
-	private dictionaryCache: Map<string, { dictionary: Set<string>; timestamp: number }> = new Map();
+	private dictionaryCache: Map<string, { dictionary: Map<string, string>[]; timestamp: number }> = new Map();
 	private CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
 
 	private static SOURCES: DictionarySource[] = [
@@ -31,7 +31,7 @@ export class SpellChecker {
 		},
 	];
 
-	private async fetchDictionary(language: 'en' | 'es', signal?: AbortSignal): Promise<Set<string>> {
+	private async fetchDictionary(language: 'en' | 'es', signal?: AbortSignal): Promise<Map<string, string>[]> {
 		const source = SpellChecker.SOURCES.find((s) => s.language === language);
 		if (!source) throw new Error(`No dictionary source for language: ${language}`);
 
@@ -50,14 +50,21 @@ export class SpellChecker {
 				.map((word: string) => word.trim().toLowerCase())
 				.filter((word: string) => word.length > 1 && /^[a-zá-ñ]+$/.test(word));
 
-			return new Set(words);
+			const dictionary = new Set(words);
+			const chunkSize = 10000;
+			const dictionaryChunks: Map<string, string>[] = [];
+			const entries: [string, string][] = Array.from(dictionary.values()).map((word) => [word, word]);
+			for (let i = 0; i < entries.length; i += chunkSize) {
+				dictionaryChunks.push(new Map(entries.slice(i, i + chunkSize)));
+			}
+			return dictionaryChunks;
 		} catch (error) {
 			console.error(`Dictionary fetch failed for ${language}:`, error);
-			return new Set();
+			throw new Error('Dictionary fetch failed');
 		}
 	}
 
-	private async getCachedDictionary(language: 'en' | 'es'): Promise<Set<string>> {
+	private async getCachedDictionary(language: 'en' | 'es'): Promise<Map<string, string>[]> {
 		const cacheKey = `dictionary_${language}`;
 		const now = Date.now();
 
@@ -73,7 +80,7 @@ export class SpellChecker {
 			const dictionary = await this.fetchDictionary(language, controller.signal);
 			clearTimeout(timeoutId);
 
-			if (dictionary.size > 0) {
+			if (dictionary.length > 0) {
 				this.dictionaryCache.set(cacheKey, {
 					dictionary,
 					timestamp: now,
@@ -83,7 +90,72 @@ export class SpellChecker {
 			return dictionary;
 		} catch (error) {
 			console.error(`Dictionary fetch failed for ${language}:`, error);
-			return this.dictionaryCache.get(cacheKey)?.dictionary ?? new Set();
+			return this.dictionaryCache.get(cacheKey)?.dictionary ?? [];
+		}
+	}
+
+	private findSuggestions(word: string, dictionaryChunks: Map<string, string>[], maxSuggestions: number = 4): string[] {
+		const suggestions: { word: string; distance: number }[] = [];
+
+		for (const chunk of dictionaryChunks) {
+			for (const dictWord of chunk.keys()) {
+				if (Math.abs(word.length - dictWord.length) > 2) continue;
+
+				const distance = this.wagnerFischerDistance(word, dictWord);
+				if (distance <= 2) {
+					suggestions.push({ word: dictWord, distance });
+				}
+			}
+		}
+
+		return suggestions
+			.sort((a, b) => a.distance - b.distance)
+			.slice(0, maxSuggestions)
+			.map((item) => item.word);
+	}
+
+	async checkSpelling(text: string, language: 'en' | 'es'): Promise<SpellCheckResult[]> {
+		try {
+			const dictionaryChunks = await this.getCachedDictionary(language);
+
+			const markdownRegex = /[#*_\[\]()\w]+/g;
+			const corrections: SpellCheckResult[] = [];
+
+			let match;
+			while ((match = markdownRegex.exec(text)) !== null) {
+				const word = match[0].toLowerCase().trim();
+				let found = false;
+
+				for (const key in dictionaryChunks) {
+					if (dictionaryChunks[key] instanceof Map) {
+						if (word.length <= 1) {
+							break;
+						}
+						if (dictionaryChunks[key].has(word)) {
+							found = true;
+							break;
+						}
+					} else {
+						console.error(`dictionaryChunks[${key}] is not a Map`);
+					}
+				}
+
+				if (found) {
+					const suggestions = this.findSuggestions(word, Object.values(dictionaryChunks));
+
+					if (suggestions.length > 0) {
+						corrections.push({
+							original: word,
+							suggestions,
+						});
+					}
+				}
+			}
+
+			return corrections;
+		} catch (error) {
+			console.error('Spelling check failed:', error);
+			return [];
 		}
 	}
 
@@ -93,7 +165,6 @@ export class SpellChecker {
 		}
 
 		if (s2.length === 0) return s1.length;
-		if (Math.abs(s1.length - s2.length) > 2) return Math.abs(s1.length - s2.length);
 
 		let previousRow = Array.from({ length: s2.length + 1 }, (_, i) => i);
 		let currentRow = new Array(s2.length + 1).fill(0);
@@ -114,67 +185,6 @@ export class SpellChecker {
 
 		return previousRow[s2.length];
 	}
-
-	private findSuggestions(word: string, dictionary: Set<string>, maxSuggestions: number = 4): string[] {
-		if (dictionary.size > 100000) {
-			return [];
-		}
-
-		return Array.from(dictionary)
-			.filter((dictWord) => Math.abs(word.length - dictWord.length) <= 2)
-			.map((dictWord) => ({
-				word: dictWord,
-				distance: this.wagnerFischerDistance(word, dictWord),
-			}))
-			.filter((item) => item.distance <= 2)
-			.sort((a, b) => a.distance - b.distance)
-			.slice(0, maxSuggestions)
-			.map((item) => item.word);
-	}
-
-	async checkSpelling(text: string, language: 'en' | 'es'): Promise<SpellCheckResult[]> {
-		try {
-			const dictionary = await this.getCachedDictionary(language);
-
-			const markdownRegex = /[#*_\[\]()\w]+/g;
-			const corrections: SpellCheckResult[] = [];
-
-			let match;
-			while ((match = markdownRegex.exec(text)) !== null) {
-				const word = match[0].toLowerCase();
-
-				if (dictionary.has(word)) continue;
-
-				const suggestions = this.findSuggestions(word, dictionary);
-
-				if (suggestions.length > 0) {
-					corrections.push({
-						original: word,
-						suggestions,
-					});
-				}
-			}
-			return corrections;
-		} catch (error) {
-			console.error('Spelling check failed:', error);
-			return [];
-		}
-	}
 }
 
 export const spellChecker = new SpellChecker();
-
-export async function checkGrammarNote(toCheck: CheckNote): Promise<SpellCheckResult[]> {
-	try {
-		const controller = new AbortController();
-		const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-		const corrections = await spellChecker.checkSpelling(toCheck.text, toCheck.language || 'en');
-		console.log(corrections);
-		clearTimeout(timeoutId);
-		return corrections;
-	} catch (error) {
-		console.error('Spelling check failed:', error);
-		return [];
-	}
-}
