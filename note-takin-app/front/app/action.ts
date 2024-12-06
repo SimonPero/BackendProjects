@@ -95,7 +95,7 @@ export async function grammarCheckNote(
     { text, language },
     userId
   );
-  console.log(corrections);
+
   return corrections;
 }
 

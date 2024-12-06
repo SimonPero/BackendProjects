@@ -3,6 +3,7 @@ import { PencilLine } from "lucide-react";
 import { NoteDto } from "@/types/dto/note.dto";
 import LogOut from "./LogOut";
 import SearchForm from "./SearchForm";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header({
   notes,
@@ -37,6 +38,7 @@ export default function Header({
               <span className="cursor-pointer">Iniciar sesión</span>
             </Link>
           )}
+          <LanguageSelector />
         </div>
       </nav>
     </header>
