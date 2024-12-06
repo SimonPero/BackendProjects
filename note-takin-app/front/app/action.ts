@@ -4,7 +4,7 @@ import { authApi } from "@/api/auth.api";
 import { notesApi } from "@/api/notes.api";
 import { usersApi } from "@/api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
-import { NoteDto } from "@/types/dto/note.dto";
+import { NoteDto, SpellCheckResult } from "@/types/dto/note.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";
 import Fuse from "fuse.js";
 import { cookies } from "next/headers";
@@ -84,4 +84,22 @@ export async function searchNotes(notes: NoteDto[], searchQuery: string) {
 export async function deleteSearchCookie() {
   const cookieStore = await cookies();
   cookieStore.delete("searchResults");
+}
+
+export async function grammarCheckNote(
+  userId: number,
+  text: string,
+  language: string
+) {
+  const corrections: SpellCheckResult[] = await notesApi.checkGrammarNote(
+    { text, language },
+    userId
+  );
+  console.log(corrections);
+  return corrections;
+}
+
+export async function getNoteById(id: string) {
+  const note: NoteDto = await notesApi.getNoteById(id);
+  return note;
 }

@@ -1,8 +1,32 @@
-import { SquarePen } from "lucide-react";
+"use client";
 
-export default function GrammarCheckButton() {
+import { SquarePen } from "lucide-react";
+import { grammarCheckNote } from "@/app/action";
+
+export default function GrammarCheckButton({
+  userId,
+  text,
+  language,
+  onGrammarCheck,
+}: {
+  userId: number;
+  text: string;
+  language: string;
+  onGrammarCheck: (
+    results: { original: string; suggestions: string[] }[]
+  ) => void;
+}) {
+  async function handleCheck() {
+    const results = await grammarCheckNote(userId, text, language);
+    onGrammarCheck(results);
+  }
+
   return (
-    <div>
+    <div
+      onClick={() => {
+        handleCheck();
+      }}
+    >
       <SquarePen />
     </div>
   );

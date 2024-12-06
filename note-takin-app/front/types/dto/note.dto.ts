@@ -12,3 +12,8 @@ export type CreateNoteDto = {
   content: string;
   userId: number;
 };
+
+export interface SpellCheckResult {
+  original: string;
+  suggestions: string[];
+}

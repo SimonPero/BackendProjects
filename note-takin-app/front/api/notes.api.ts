@@ -1,14 +1,10 @@
 import { getAuthCookie } from "@/app/action";
 import { CreateNoteDto, NoteDto } from "@/types/dto/note.dto";
+import { SpellCheckResult } from "@/types/dto/note.dto";
 
 type CheckNote = {
   text: string;
   language: string;
-};
-
-export type SpellCheckResult = {
-  original: string;
-  suggestions: string[];
 };
 
 class NotesApi {
@@ -92,7 +88,7 @@ class NotesApi {
 
   async checkGrammarNote(
     toCheck: CheckNote,
-    id: string
+    id: number
   ): Promise<SpellCheckResult[]> {
     const auth = await getAuthCookie();
     if (!auth) {
@@ -107,7 +103,6 @@ class NotesApi {
       },
       body: JSON.stringify(toCheck),
     });
-    console.log(res);
     const data = await res.json();
     return data;
   }
