@@ -34,13 +34,11 @@ export class SpellChecker {
 			const response = await fetch(source.url, { signal });
 			const data = await response.text();
 
-			// Normalize dictionary words
 			const words = data
 				.split('\n')
 				.map((word) => word.trim().toLowerCase())
 				.filter((word) => /^[a-zá-ñ']+$/.test(word) && word.length > 1);
 
-			// Split into chunks
 			const chunkSize = 100;
 			const dictionaryChunks: Map<string, string>[] = [];
 			const entries: [string, string][] = words.map((word) => [word, word]);
@@ -60,13 +58,11 @@ export class SpellChecker {
 		const cacheKey = `dictionary_${language}`;
 		const now = Date.now();
 
-		// Use cached version if available and valid
 		const cachedEntry = this.dictionaryCache.get(cacheKey);
 		if (cachedEntry && now - cachedEntry.timestamp < this.CACHE_TTL) {
 			return cachedEntry.dictionary;
 		}
 
-		// Fetch and cache the dictionary
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -85,20 +81,17 @@ export class SpellChecker {
 
 	async checkSpelling(text: string, language: 'en' | 'es'): Promise<SpellCheckResult[]> {
 		const dictionaryChunks = await this.getCachedDictionary(language);
-		console.log(`Loaded ${dictionaryChunks.length} dictionary chunks.`);
 
 		const corrections: SpellCheckResult[] = [];
 		const seenCorrections = new Set<string>();
-		const wordRegex = /\b[\p{L}']+\b/gu; // Extract words with letters/apostrophes
+		const wordRegex = /\b[\p{L}']+\b/gu;
 
 		const textWords = text.match(wordRegex) || [];
-		console.log('Extracted words:', textWords);
 
 		for (const word of textWords) {
 			const normalizedWord = word.toLowerCase().trim();
 			if (normalizedWord.length <= 1) continue;
 
-			// Check if the word exists in any chunk
 			let found = false;
 			for (const chunk of dictionaryChunks) {
 				if (chunk.has(normalizedWord)) {
@@ -108,7 +101,6 @@ export class SpellChecker {
 			}
 
 			if (!found) {
-				console.log(`Word not found: "${normalizedWord}"`);
 				const suggestions = this.findSuggestionsAcrossChunks(normalizedWord, dictionaryChunks);
 				if (suggestions.length > 0 && !seenCorrections.has(normalizedWord)) {
 					corrections.push({ original: normalizedWord, suggestions });
