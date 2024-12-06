@@ -154,7 +154,7 @@ NoteRouter.post('/check/:id', authMiddleware, async (c) => {
 		if (!text || !['en', 'es'].includes(language)) {
 			return c.json({ error: 'Invalid input' }, 400);
 		}
-		const corrections: SpellCheckResult[] = await spellChecker.checkSpelling(text, 'en');
+		const corrections = await spellChecker.checkSpelling(text, 'en');
 
 		return c.json(corrections, 200);
 	} catch (error) {
