@@ -1,31 +1,39 @@
+"use server";
+
 import { cookies } from "next/headers";
 import Link from "next/link";
-import { notesApi } from "../api/notes.api";
+import { notesApi } from "./api/notes.api";
 import Note from "@/components/Note";
-import { getAuthCookie } from "./action";
+import { deleteSearchCookie, getAuthCookie, logOutUser } from "./actions";
 import { NoteDto } from "@/types/dto/note.dto";
 import SearchResultsCleaner from "@/components/SearchResultsCleaner";
 
 export default async function Home() {
-  const auth = await getAuthCookie();
-  const cookieStore = cookies();
   let notes: NoteDto[] = [];
-  const searchResultsCookie = (await cookieStore).get("searchResults");
+  const auth = await getAuthCookie();
+  try {
+    const cookieStore = cookies();
+    const searchResultsCookie = (await cookieStore).get("searchResults");
 
-  if (!searchResultsCookie?.value) {
-    notes = await notesApi.getAllNotesOfUser();
-  } else {
-    notes = JSON.parse(searchResultsCookie.value);
+    if (searchResultsCookie?.value) {
+      notes = JSON.parse(searchResultsCookie.value);
+    } else {
+      notes = await notesApi.getAllNotesOfUser(auth);
+    }
+  } catch (error) {
+    console.error("Failed to fetch notes:", error);
+
+    await logOutUser();
   }
 
-  async function deleteSearchCookie() {
+  async function delSearchCookie() {
     "use server";
-    (await cookies()).delete("searchResults");
+    await deleteSearchCookie();
   }
 
   return (
     <section className="flex py-10 sm:py-5 flex-col">
-      <SearchResultsCleaner deleteSearchCookie={deleteSearchCookie} />
+      <SearchResultsCleaner deleteSearchCookie={delSearchCookie} />
       <h1 className="text-4xl underline p-5 flex justify-center">Your notes</h1>
       {auth ? (
         notes.length > 0 ? (
@@ -38,6 +46,7 @@ export default async function Home() {
                   updatedAt={note.updatedAt}
                   content={note.content}
                   id={note.id}
+                  userId={note.userId}
                 />
               </Link>
             ))}

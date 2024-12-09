@@ -5,10 +5,12 @@ import { useState } from "react";
 import DeleteButton from "./DeleteButton";
 import GrammarCheckButton from "./GrammarCheckButton";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function NoteClient({ note }: { note: NoteDto }) {
   const [content, setContent] = useState("");
-
+  const { language } = useLanguage();
+  console.log(language)
   function applyGrammarSuggestions(
     results: { original: string; suggestions: string[] }[]
   ) {
@@ -19,6 +21,7 @@ export default function NoteClient({ note }: { note: NoteDto }) {
 
       updatedContent = updatedContent.replace(regex, replacement);
     });
+    console.log(updatedContent);
     setContent(updatedContent);
   }
 
@@ -47,7 +50,7 @@ export default function NoteClient({ note }: { note: NoteDto }) {
           <GrammarCheckButton
             userId={note.userId}
             text={note.content}
-            language={"en"}
+            language={language}
             onGrammarCheck={applyGrammarSuggestions}
           />
         </div>

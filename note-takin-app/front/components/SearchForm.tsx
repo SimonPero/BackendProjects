@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { searchNotes } from "@/app/action";
+import { searchNotes } from "@/app/actions";
 import { NoteDto } from "@/types/dto/note.dto";
 import { Input } from "./ui/input";
 import { FormField, FormItem, FormControl, FormMessage, Form } from "./ui/form";

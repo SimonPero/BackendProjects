@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteNote } from "@/app/action";
+import { deleteNote } from "@/app/actions";
 import { Trash2 } from "lucide-react";
 
 export default function DeleteButton({ id }: { id: string }) {

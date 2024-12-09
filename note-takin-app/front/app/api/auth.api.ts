@@ -27,7 +27,6 @@ class AuthApi {
       const cookieParts = setCookieHeader.split(";").map((part) => part.trim());
       const [cookieName, cookieValue] = cookieParts[0].split("=");
 
-      // Decode the cookie value to remove URL encoding
       const decodedValue = decodeURIComponent(cookieValue);
 
       const maxAge = cookieParts
@@ -41,7 +40,6 @@ class AuthApi {
 
       const cookieStore = await cookies();
       cookieStore.set(cookieName, decodedValue, {
-        // Remove the extra "=" and use decoded value
         secure,
         httpOnly,
         sameSite:
@@ -61,8 +59,6 @@ class AuthApi {
   async logOut(): Promise<{ success: boolean }> {
     try {
       const res = await fetch(`${this.baseUrl}/auth/logout`);
-      const cookieStore = await cookies();
-      cookieStore.delete("auth");
       return await res.json();
     } catch (error) {
       console.error("Logout error:", error);

@@ -1,5 +1,5 @@
 import { NoteDto } from "@/types/dto/note.dto";
-import { notesApi } from "@/api/notes.api";
+import { notesApi } from "@/app/api/notes.api";
 import NoteClient from "@/components/NoteAlone";
 const noteDto: NoteDto = {
   id: "",

@@ -1,6 +1,7 @@
-import { getAuthCookie } from "@/app/action";
+import { getAuthCookie } from "@/app/actions";
 import { CreateNoteDto, NoteDto } from "@/types/dto/note.dto";
 import { SpellCheckResult } from "@/types/dto/note.dto";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 type CheckNote = {
   text: string;
@@ -13,8 +14,7 @@ class NotesApi {
     const data = await res.json();
     return data;
   }
-  async getAllNotesOfUser(): Promise<NoteDto[]> {
-    const auth = await getAuthCookie();
+  async getAllNotesOfUser(auth: RequestCookie | undefined): Promise<NoteDto[]> {
     if (!auth) {
       return [];
     }
@@ -31,6 +31,7 @@ class NotesApi {
     const data = await res.json();
 
     if (!res.ok) {
+      console.log(data.error);
       throw new Error(data.error || "Failed to fetch notes");
     }
 

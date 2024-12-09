@@ -1,6 +1,6 @@
 "use client";
 
-import { createNote } from "@/app/action";
+import { createNote } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import {
   Form,

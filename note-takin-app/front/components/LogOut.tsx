@@ -1,6 +1,6 @@
 "use client";
 
-import { logOutUser } from "@/app/action";
+import { logOutUser } from "@/app/actions";
 import { redirect } from "next/navigation";
 
 export default function LogOut() {

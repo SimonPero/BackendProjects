@@ -1,7 +1,7 @@
 "use client";
 
 import { SquarePen } from "lucide-react";
-import { grammarCheckNote } from "@/app/action";
+import { grammarCheckNote } from "@/app/actions";
 
 export default function GrammarCheckButton({
   userId,

@@ -1,8 +1,8 @@
 "use server";
 
-import { authApi } from "@/api/auth.api";
-import { notesApi } from "@/api/notes.api";
-import { usersApi } from "@/api/users.api";
+import { authApi } from "./api/auth.api";
+import { notesApi } from "./api/notes.api";
+import { usersApi } from "./api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
 import { NoteDto, SpellCheckResult } from "@/types/dto/note.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";

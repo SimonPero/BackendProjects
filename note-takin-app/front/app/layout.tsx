@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
-import { notesApi } from "@/api/notes.api";
+import { notesApi } from "./api/notes.api";
 import { NoteDto } from "@/types/dto/note.dto";
-import { getAuthCookie } from "./action";
+import { getAuthCookie } from "./actions";
 import "./globals.css";
 
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -9,8 +9,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const notes: NoteDto[] = await notesApi.getAllNotesOfUser();
   const auth = await getAuthCookie();
+  const notes: NoteDto[] = await notesApi.getAllNotesOfUser(auth);
 
   return (
     <html lang="en">
