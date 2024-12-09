@@ -21,6 +21,7 @@ export default function NoteClient({ note }: { note: NoteDto }) {
 
       updatedContent = updatedContent.replace(regex, replacement);
     });
+    console.log(language)
     console.log(updatedContent);
     setContent(updatedContent);
   }
