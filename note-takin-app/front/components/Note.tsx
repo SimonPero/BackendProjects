@@ -4,7 +4,6 @@ import { NoteDto } from "@/types/dto/note.dto";
 export default function Note({
   id,
   title,
-  createdAt,
   updatedAt,
   content,
 }: NoteDto) {

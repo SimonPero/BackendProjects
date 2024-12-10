@@ -45,7 +45,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     };
 
     fetchInitialLanguage();
-  }, []); // Empty dependency array means this runs only on component mount
+  }, []);
 
   const updateLanguage = async (newLanguage: "es" | "en") => {
     try {
@@ -57,10 +57,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   };
 
   return (
-    <LanguageContext.Provider 
-      value={{ 
-        language, 
-        setLanguage: updateLanguage 
+    <LanguageContext.Provider
+      value={{
+        language,
+        setLanguage: updateLanguage,
       }}
     >
       {children}

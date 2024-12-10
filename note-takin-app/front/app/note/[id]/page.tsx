@@ -1,4 +1,3 @@
-
 import { notesApi } from "@/app/api/notes.api";
 import NoteClient from "@/components/NoteAlone";
 

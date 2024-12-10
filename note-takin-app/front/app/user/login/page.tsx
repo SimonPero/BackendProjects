@@ -83,7 +83,7 @@ export default function LoginPage() {
       </Form>
       <div className="border-t my-4"></div>
       <Link href={"/user/register"} className="text-blue-500 hover:underline">
-        Don't have an account? Sign up here
+        Don&apos;t have an account? Sign up here
       </Link>
     </div>
   );

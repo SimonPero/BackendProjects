@@ -5,13 +5,14 @@ import LogOut from "./LogOut";
 import SearchForm from "./SearchForm";
 import LanguageSelector from "./LanguageSelector";
 import { cookies } from "next/headers";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 export default async function Header({
   notes,
   auth,
 }: {
   notes: NoteDto[];
-  auth: any;
+  auth: RequestCookie | undefined;
 }) {
   const cookieStore = await cookies();
   const language = cookieStore.get("appLanguage")?.value;

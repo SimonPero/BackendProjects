@@ -105,7 +105,7 @@ class NotesApi {
     return data;
   }
 
-  async updateNote(toChange: putNoteData, noteId: string): Promise<Boolean> {
+  async updateNote(toChange: putNoteData, noteId: string): Promise<boolean> {
     const auth = await getAuthCookie();
     if (!auth) {
       throw new Error("No authentication found");
