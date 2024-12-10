@@ -4,13 +4,19 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { notesApi } from "./api/notes.api";
 import Note from "@/components/Note";
-import { deleteSearchCookie, getAuthCookie, logOutUser } from "./actions";
+import {
+  deleteSearchCookie,
+  getAuthCookie,
+  getLanguageCookie,
+  logOutUser,
+} from "./actions";
 import { NoteDto } from "@/types/dto/note.dto";
 import SearchResultsCleaner from "@/components/SearchResultsCleaner";
 
 export default async function Home() {
   let notes: NoteDto[] = [];
   const auth = await getAuthCookie();
+  const language = await getLanguageCookie();
   try {
     const cookieStore = cookies();
     const searchResultsCookie = (await cookieStore).get("searchResults");
@@ -34,7 +40,9 @@ export default async function Home() {
   return (
     <section className="flex py-10 sm:py-5 flex-col">
       <SearchResultsCleaner deleteSearchCookie={delSearchCookie} />
-      <h1 className="text-4xl underline p-5 flex justify-center">Your notes</h1>
+      <h1 className="text-4xl underline p-5 flex justify-center">
+        {language === "en" ? "Your Notes" : "Tus anotaciones"}
+      </h1>
       {auth ? (
         notes.length > 0 ? (
           <div className="mx-auto max-w-7xl px-6 lg:px-8 flex gap-2">
@@ -52,10 +60,16 @@ export default async function Home() {
             ))}
           </div>
         ) : (
-          <div>There are no notes</div>
+          <div className="flex justify-center">
+            {language === "en"
+              ? "You haven't wrote any note yet"
+              : "No has creado ninguna anotación todavía"}
+          </div>
         )
       ) : (
-        <div>Please Log In</div>
+        <div className="flex justify-center">
+          {language === "en" ? "Please log in" : "Por favor. Inicia tu sesión"}
+        </div>
       )}
     </section>
   );

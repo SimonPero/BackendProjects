@@ -7,6 +7,7 @@ import { searchNotes } from "@/app/actions";
 import { NoteDto } from "@/types/dto/note.dto";
 import { Input } from "./ui/input";
 import { FormField, FormItem, FormControl, FormMessage, Form } from "./ui/form";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const formSchema = z.object({
   search: z.string().min(1),
@@ -17,6 +18,7 @@ interface SearchFormProps {
 }
 
 export default function SearchForm({ notes }: SearchFormProps) {
+  const { language } = useLanguage();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { search: "" },
@@ -25,6 +27,10 @@ export default function SearchForm({ notes }: SearchFormProps) {
   async function onSubmit(values: { search: string }) {
     await searchNotes(notes, values.search);
   }
+  const searchPlaceholder = {
+    en: "Search",
+    es: "Buscar",
+  }[language];
 
   return (
     <div className="relative mr-3 w-full">
@@ -40,13 +46,13 @@ export default function SearchForm({ notes }: SearchFormProps) {
               <FormItem className="w-full">
                 <FormControl>
                   <div className="relative w-full">
-                    <Input 
-                      placeholder="Search" 
-                      {...field} 
+                    <Input
+                      placeholder={searchPlaceholder}
+                      {...field}
                       className="w-full pl-4 pr-10 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-400 bg-transparent"
                     />
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="absolute top-1/2 right-3 transform -translate-y-1/2"
                     >
                       <svg

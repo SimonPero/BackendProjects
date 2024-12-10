@@ -1,4 +1,5 @@
 "use client";
+import { getLanguageCookie, setLanguageCookie } from "@/app/actions";
 import React, {
   createContext,
   useState,
@@ -31,21 +32,37 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   const [language, setLanguage] = useState<"es" | "en">("en");
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("appLanguage");
-    if (
-      storedLanguage &&
-      (storedLanguage === "es" || storedLanguage === "en")
-    ) {
-      setLanguage(storedLanguage);
-    }
-  }, []);
+    const fetchInitialLanguage = async () => {
+      try {
+        const storedLanguage = await getLanguageCookie();
+        if (storedLanguage && ["es", "en"].includes(storedLanguage)) {
+          setLanguage(storedLanguage);
+          await setLanguageCookie(storedLanguage);
+        }
+      } catch (error) {
+        console.error("Failed to fetch or set language:", error);
+      }
+    };
 
-  useEffect(() => {
-    localStorage.setItem("appLanguage", language);
-  }, [language]);
+    fetchInitialLanguage();
+  }, []); // Empty dependency array means this runs only on component mount
+
+  const updateLanguage = async (newLanguage: "es" | "en") => {
+    try {
+      await setLanguageCookie(newLanguage);
+      setLanguage(newLanguage);
+    } catch (error) {
+      console.error("Failed to update language:", error);
+    }
+  };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage }}>
+    <LanguageContext.Provider 
+      value={{ 
+        language, 
+        setLanguage: updateLanguage 
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

@@ -4,14 +4,18 @@ import { NoteDto } from "@/types/dto/note.dto";
 import LogOut from "./LogOut";
 import SearchForm from "./SearchForm";
 import LanguageSelector from "./LanguageSelector";
+import { cookies } from "next/headers";
 
-export default function Header({
+export default async function Header({
   notes,
   auth,
 }: {
   notes: NoteDto[];
   auth: any;
 }) {
+  const cookieStore = await cookies();
+  const language = cookieStore.get("appLanguage")?.value;
+
   return (
     <header>
       <nav className="bg-gray-200">
@@ -35,7 +39,9 @@ export default function Header({
               className="text-gray-800 no-underline mr-3"
               href={"/user/login"}
             >
-              <span className="cursor-pointer">Iniciar sesión</span>
+              <span className="cursor-pointer">
+                {language === "en" ? "Log in" : "Iniciar sesión"}
+              </span>
             </Link>
           )}
           <LanguageSelector />

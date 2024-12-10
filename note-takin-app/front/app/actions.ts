@@ -30,8 +30,8 @@ export async function logOutUser() {
 }
 
 export async function getAuthCookie() {
-  const cookieStore = cookies();
-  const auth = (await cookieStore).get("auth");
+  const cookieStore = await cookies();
+  const auth = cookieStore.get("auth");
   return auth;
 }
 
@@ -84,6 +84,16 @@ export async function searchNotes(notes: NoteDto[], searchQuery: string) {
 export async function deleteSearchCookie() {
   const cookieStore = await cookies();
   cookieStore.delete("searchResults");
+}
+export async function getLanguageCookie(): Promise<"es" | "en"> {
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get("appLanguage");
+  const lang: "es" | "en" = langCookie?.value === "es" ? "es" : "en";
+  return lang;
+}
+export async function setLanguageCookie(lang: "es" | "en"): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set("appLanguage", lang);
 }
 
 export async function grammarCheckNote(

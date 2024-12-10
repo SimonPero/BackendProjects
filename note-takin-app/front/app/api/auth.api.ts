@@ -59,6 +59,8 @@ class AuthApi {
   async logOut(): Promise<{ success: boolean }> {
     try {
       const res = await fetch(`${this.baseUrl}/auth/logout`);
+      const cookieStore = await cookies();
+      cookieStore.delete("auth");
       return await res.json();
     } catch (error) {
       console.error("Logout error:", error);

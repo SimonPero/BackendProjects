@@ -70,20 +70,18 @@ class NotesApi {
     return data;
   }
 
-  async deleteNote(id: string): Promise<NoteDto> {
+  async deleteNote(id: string): Promise<void> {
     const auth = await getAuthCookie();
     if (!auth) {
       throw {};
     }
-    const res = await fetch(`${process.env.API_URL}/notes/${id}`, {
+    await fetch(`${process.env.API_URL}/notes/${id}`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         Cookie: `${auth.name}=${auth.value}`,
       },
     });
-    const data = await res.json();
-    return data;
   }
 
   async checkGrammarNote(
