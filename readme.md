@@ -60,6 +60,6 @@
 ### Taking Notes App - TypeScript
 
 - [Taking Notes App](./note-takin-app/)
-- **Description**: A Markdown-based note-taking app with a **Hono + Cloudflare Workers** backend and a **Next.js** frontend. Features multi-user login, note creation, viewing, and deletion.  
-
+- **Description**: A Markdown-based note-taking app with a **Hono + Cloudflare Workers** backend and a **Next.js** frontend. Features multi-user login, note creation, viewing, and deletion.
+- [Visit App](https://backend-projects-2aoir323m-simonperos-projects.vercel.app)
 - **Idea From**: [RoadMap.sh](https://roadmap.sh/projects/markdown-note-taking-app)
