@@ -17,3 +17,8 @@ export interface SpellCheckResult {
   original: string;
   suggestions: string[];
 }
+
+export interface putNoteData {
+  title?: string | undefined;
+  content?: string | undefined;
+}

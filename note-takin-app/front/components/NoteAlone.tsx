@@ -6,26 +6,31 @@ import DeleteButton from "./DeleteButton";
 import GrammarCheckButton from "./GrammarCheckButton";
 import ReactMarkdown from "react-markdown";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SaveAll } from "lucide-react";
+import { saveNoteChanges } from "@/app/actions";
 
 export default function NoteClient({ note }: { note: NoteDto }) {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(note.content);
+  const [toHide, setHidden] = useState(true);
   const { language } = useLanguage();
-  console.log(language)
+
   function applyGrammarSuggestions(
     results: { original: string; suggestions: string[] }[]
   ) {
-    let updatedContent = note.content;
+    let updatedContent = content;
     results.forEach(({ original, suggestions }) => {
       const replacement = suggestions[0];
       const regex = new RegExp(`\\b${original}\\b`, "gi");
 
       updatedContent = updatedContent.replace(regex, replacement);
     });
-    console.log(language)
-    console.log(updatedContent);
     setContent(updatedContent);
+    setHidden(false);
   }
-
+  async function handleNoteChanges() {
+    await saveNoteChanges({ content }, note.id);
+    setHidden(true);
+  }
   return (
     <article
       key={note.id}
@@ -40,20 +45,36 @@ export default function NoteClient({ note }: { note: NoteDto }) {
       </small>
 
       <ReactMarkdown className="prose prose-lg max-w-none text-gray-700 p-2">
-        {note.content}
+        {content}
       </ReactMarkdown>
-
-      <div className="flex justify-end">
-        <div className="rounded p-1 border border-transparent cursor-pointer hover:border-red-900 transition duration-200 max-w-fit">
-          <DeleteButton id={note.id} />
+      <div className="flex justify-between items-center max-w-full">
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            toHide ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"
+          }`}
+        >
+          <div
+            onClick={async () => {
+              await handleNoteChanges();
+            }}
+            className="rounded p-1 border border-transparent cursor-pointer hover:border-black transition duration-200 max-w-fit"
+          >
+            <SaveAll />
+          </div>
         </div>
-        <div className="rounded p-1 border border-transparent cursor-pointer hover:border-red-900 transition duration-200 max-w-fit">
-          <GrammarCheckButton
-            userId={note.userId}
-            text={note.content}
-            language={language}
-            onGrammarCheck={applyGrammarSuggestions}
-          />
+
+        <div className="flex gap-2">
+          <div className="rounded p-1 border border-transparent cursor-pointer hover:border-red-900 transition duration-200 max-w-fit">
+            <DeleteButton id={note.id} />
+          </div>
+          <div className="rounded p-1 border border-transparent cursor-pointer hover:border-red-900 transition duration-200 max-w-fit">
+            <GrammarCheckButton
+              userId={note.userId}
+              text={content}
+              language={language}
+              onGrammarCheck={applyGrammarSuggestions}
+            />
+          </div>
         </div>
       </div>
     </article>

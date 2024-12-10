@@ -1,5 +1,5 @@
 import { getAuthCookie } from "@/app/actions";
-import { CreateNoteDto, NoteDto } from "@/types/dto/note.dto";
+import { CreateNoteDto, NoteDto, putNoteData } from "@/types/dto/note.dto";
 import { SpellCheckResult } from "@/types/dto/note.dto";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
@@ -105,6 +105,31 @@ class NotesApi {
     });
     const data = await res.json();
     return data;
+  }
+
+  async updateNote(toChange: putNoteData, noteId: string): Promise<Boolean> {
+    const auth = await getAuthCookie();
+    if (!auth) {
+      throw new Error("No authentication found");
+    }
+
+    const res = await fetch(`${process.env.API_URL}/notes/${noteId}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        Cookie: `${auth.name}=${auth.value}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(toChange),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Update note error:", errorText);
+      throw new Error(`Failed to update note: ${errorText}`);
+    }
+
+    return true;
   }
 }
 

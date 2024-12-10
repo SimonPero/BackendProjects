@@ -4,7 +4,7 @@ import { authApi } from "./api/auth.api";
 import { notesApi } from "./api/notes.api";
 import { usersApi } from "./api/users.api";
 import { AuthDto } from "@/types/dto/auth.dto";
-import { NoteDto, SpellCheckResult } from "@/types/dto/note.dto";
+import { NoteDto, SpellCheckResult, putNoteData } from "@/types/dto/note.dto";
 import { CreateUserDto, UserDto } from "@/types/dto/user.dto";
 import Fuse from "fuse.js";
 import { cookies } from "next/headers";
@@ -98,7 +98,9 @@ export async function grammarCheckNote(
 
   return corrections;
 }
-
+export async function saveNoteChanges(toChange: putNoteData, noteId: string) {
+  return await notesApi.updateNote(toChange, noteId);
+}
 export async function getNoteById(id: string) {
   const note: NoteDto = await notesApi.getNoteById(id);
   return note;
