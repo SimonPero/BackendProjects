@@ -5,6 +5,7 @@ import { getAuthCookie } from "./actions";
 import "./globals.css";
 
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Toaster } from "@/components/ui/toaster";
 
 export default async function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default async function RootLayout({
         <LanguageProvider>
           <Header notes={notes} auth={auth} />
           {children}
+          <Toaster />
         </LanguageProvider>
       </body>
     </html>

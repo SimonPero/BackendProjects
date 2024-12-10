@@ -36,8 +36,7 @@ export async function getAuthCookie() {
 }
 
 export async function deleteNote(id: string) {
-  const data = await notesApi.deleteNote(id);
-  return data;
+  await notesApi.deleteNote(id);
 }
 
 export async function createNote({

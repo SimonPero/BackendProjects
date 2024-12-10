@@ -8,11 +8,13 @@ import ReactMarkdown from "react-markdown";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SaveAll } from "lucide-react";
 import { saveNoteChanges } from "@/app/actions";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NoteClient({ note }: { note: NoteDto }) {
   const [content, setContent] = useState(note.content);
   const [toHide, setHidden] = useState(true);
   const { language } = useLanguage();
+  const { toast } = useToast();
 
   function applyGrammarSuggestions(
     results: { original: string; suggestions: string[] }[]
@@ -27,10 +29,12 @@ export default function NoteClient({ note }: { note: NoteDto }) {
     setContent(updatedContent);
     setHidden(false);
   }
+
   async function handleNoteChanges() {
     await saveNoteChanges({ content }, note.id);
     setHidden(true);
   }
+
   return (
     <article
       key={note.id}
@@ -55,7 +59,26 @@ export default function NoteClient({ note }: { note: NoteDto }) {
         >
           <div
             onClick={async () => {
-              await handleNoteChanges();
+              console.log("Save button clicked");
+              try {
+                await handleNoteChanges();
+                console.log("Changes saved successfully");
+                await toast({
+                  description:
+                    language === "en"
+                      ? "Changes have been saved"
+                      : "Los cambios han sido guardados",
+                });
+              } catch (error) {
+                console.error("Failed to save changes", error);
+                toast({
+                  description:
+                    language === "en"
+                      ? "Failed to save changes"
+                      : "Error al guardar los cambios",
+                  variant: "destructive",
+                });
+              }
             }}
             className="rounded p-1 border border-transparent cursor-pointer hover:border-black transition duration-200 max-w-fit"
           >
