@@ -11,21 +11,42 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-// Define schema for login form
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z
-    .string()
-    .min(1, { message: "Password must be at least 8 characters." }),
-});
-
 export default function LoginPage() {
+  const { language } = useLanguage();
+
+  // Mensajes de error dinámicos basados en el idioma
+  const errorMessages = {
+    en: {
+      email: "Invalid email address.",
+      password: "Password must be at least 8 characters.",
+      required: "This field is required.",
+    },
+    es: {
+      email: "Correo electrónico no válido.",
+      password: "La contraseña debe tener al menos 8 caracteres.",
+      required: "Este campo es obligatorio.",
+    },
+  };
+
+  // Esquema de validación dinámico
+  const formSchema = z.object({
+    email: z
+      .string()
+      .email({ message: errorMessages[language].email })
+      .min(1, { message: errorMessages[language].required }),
+    password: z
+      .string()
+      .min(8, { message: errorMessages[language].password })
+      .min(1, { message: errorMessages[language].required }),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,9 +72,18 @@ export default function LoginPage() {
             name="email"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Email</FormLabel>
+                <FormLabel>
+                  {language === "en" ? "Email" : "Correo electrónico"}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="emailexample@example.com" {...field} />
+                  <Input
+                    placeholder={
+                      language === "en"
+                        ? "emailexample@example.com"
+                        : "correo@ejemplo.com"
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -64,11 +94,17 @@ export default function LoginPage() {
             name="password"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Password</FormLabel>
+                <FormLabel>
+                  {language === "en" ? "Password" : "Contraseña"}
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={
+                      language === "en"
+                        ? "Enter your password"
+                        : "Ingrese su contraseña"
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -77,13 +113,15 @@ export default function LoginPage() {
             )}
           />
           <Button type="submit" className="w-full">
-            Log In
+            {language === "en" ? "Log In" : "Iniciar sesión"}
           </Button>
         </form>
       </Form>
       <div className="border-t my-4"></div>
       <Link href={"/user/register"} className="text-blue-500 hover:underline">
-        Don&apos;t have an account? Sign up here
+        {language === "en"
+          ? "Don't have an account? Sign up here"
+          : "¿No tienes una cuenta? Regístrate aquí"}
       </Link>
     </div>
   );

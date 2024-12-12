@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function checkFileType(file: File) {
   if (file?.name) {
@@ -32,6 +33,7 @@ const fileSchema = z.object({
 });
 
 export default function FileForm() {
+  const { language } = useLanguage();
   const form = useForm<z.infer<typeof fileSchema>>({
     resolver: zodResolver(fileSchema),
     defaultValues: {
@@ -61,7 +63,9 @@ export default function FileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className=" mt-3">Submit</Button>
+        <Button type="submit" className=" mt-3">
+          {language === "en" ? "Submit" : "Subir"}
+        </Button>
       </form>
     </Form>
   );

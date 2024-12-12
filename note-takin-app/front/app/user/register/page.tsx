@@ -11,32 +11,58 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
-    email: z.string().min(2, {
-      message: "Email must be at least 2 characters.",
-    }),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
-    }),
-    confirmPass: z.string().min(8, {
-      message: "Confirm password must be at least 8 characters.",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPass, {
-    path: ["confirmPass"],
-    message: "Passwords do not match.",
-  });
-
 export default function Page() {
+  const { language } = useLanguage();
+
+  // Mensajes de error dinámicos basados en el idioma
+  const errorMessages = {
+    en: {
+      name: "Name must be at least 2 characters.",
+      email: "Invalid email address.",
+      password: "Password must be at least 8 characters.",
+      confirmPass: "Passwords do not match.",
+      required: "This field is required.",
+    },
+    es: {
+      name: "El nombre debe tener al menos 2 caracteres.",
+      email: "Dirección de correo no válida.",
+      password: "La contraseña debe tener al menos 8 caracteres.",
+      confirmPass: "Las contraseñas no coinciden.",
+      required: "Este campo es obligatorio.",
+    },
+  };
+
+  // Esquema de validación con Zod dinámico
+  const formSchema = z
+    .object({
+      name: z
+        .string()
+        .min(2, { message: errorMessages[language].name })
+        .min(1, { message: errorMessages[language].required }),
+      email: z
+        .string()
+        .email({ message: errorMessages[language].email })
+        .min(1, { message: errorMessages[language].required }),
+      password: z
+        .string()
+        .min(8, { message: errorMessages[language].password })
+        .min(1, { message: errorMessages[language].required }),
+      confirmPass: z
+        .string()
+        .min(8, { message: errorMessages[language].password })
+        .min(1, { message: errorMessages[language].required }),
+    })
+    .refine((data) => data.password === data.confirmPass, {
+      path: ["confirmPass"],
+      message: errorMessages[language].confirmPass,
+    });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,9 +89,18 @@ export default function Page() {
             name="name"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Username</FormLabel>
+                <FormLabel>
+                  {language === "en" ? "Username" : "Nombre de Usuario"}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Put your username here!" {...field} />
+                  <Input
+                    placeholder={
+                      language === "en"
+                        ? "Put your username here!"
+                        : "Pon tu nombre de usuario aquí"
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -78,7 +113,14 @@ export default function Page() {
               <FormItem className="w-full">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="emailexample@example.com" {...field} />
+                  <Input
+                    placeholder={
+                      language === "en"
+                        ? "emailexample@example.com"
+                        : "ejemplodeemail@ejemplo.com"
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -89,9 +131,19 @@ export default function Page() {
             name="password"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>password</FormLabel>
+                <FormLabel>
+                  {language === "en" ? "Password" : "Contraseña"}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Put your password here!" {...field} />
+                  <Input
+                    type="password"
+                    placeholder={
+                      language === "en"
+                        ? "Put your password here!"
+                        : "Pon tu contraseña aquí"
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,10 +154,19 @@ export default function Page() {
             name="confirmPass"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>
+                  {language === "en"
+                    ? "Confirm Password"
+                    : "Confirmar Contraseña"}
+                </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Please, confirm your password."
+                    type="password"
+                    placeholder={
+                      language === "en"
+                        ? "Please, confirm your password."
+                        : "Por favor, confirma tu contraseña"
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -114,13 +175,15 @@ export default function Page() {
             )}
           />
           <Button type="submit" className="w-full">
-            Register
+            {language === "en" ? "Register" : "Registrarse"}
           </Button>
         </form>
       </Form>
       <div className="border-t my-4"></div>
       <Link href={"/user/login"} className="text-blue-500 hover:underline">
-        Already have an account? Login in here
+        {language === "en"
+          ? "Already have an account? Login in here"
+          : "¿Ya tienes una cuenta? Inicia sesión aquí"}
       </Link>
     </div>
   );

@@ -62,7 +62,6 @@ export default function NoteClient({ note }: { note: NoteDto }) {
               console.log("Save button clicked");
               try {
                 await handleNoteChanges();
-                console.log("Changes saved successfully");
                 toast({
                   description:
                     language === "en"

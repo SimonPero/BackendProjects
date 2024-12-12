@@ -16,17 +16,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const formSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title must exist.",
-  }),
-  content: z.string().min(1, {
-    message: "Content must exist.",
-  }),
-});
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Page() {
+  const { language } = useLanguage();
+
+  // Mensajes de error dinámicos basados en el idioma
+  const errorMessages = {
+    en: {
+      title: "Title must exist.",
+      content: "Content must exist.",
+    },
+    es: {
+      title: "El título debe existir.",
+      content: "El contenido debe existir.",
+    },
+  };
+
+  // Esquema de validación con Zod dinámico
+  const formSchema = z.object({
+    title: z.string().min(1, { message: errorMessages[language].title }),
+    content: z.string().min(1, { message: errorMessages[language].content }),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,16 +56,23 @@ export default function Page() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-2 flex  flex-col items-center"
+          className="space-y-2 flex flex-col items-center"
         >
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Title</FormLabel>
+                <FormLabel>{language === "en" ? "Title" : "Título"}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Put a title here!" {...field} />
+                  <Input
+                    placeholder={
+                      language === "en"
+                        ? "Put a title here!"
+                        : "Pon un título aquí"
+                    }
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -64,10 +83,16 @@ export default function Page() {
             name="content"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Content</FormLabel>
+                <FormLabel>
+                  {language === "en" ? "Content" : "Contenido"}
+                </FormLabel>
                 <FormControl className="max-h-4/5">
                   <Textarea
-                    placeholder="Write anything you want as if it were a Markdown file!"
+                    placeholder={
+                      language === "en"
+                        ? "Write anything you want as if it were a Markdown file!"
+                        : "Escribe lo que quieras como si fuera un archivo Markdown"
+                    }
                     className="w-full p-2 border rounded h-[30vh] resize-none"
                     {...field}
                   />
@@ -77,7 +102,7 @@ export default function Page() {
             )}
           />
           <Button type="submit" className="w-full">
-            Add note
+            {language === "en" ? "Add note" : "Agregar nota"}
           </Button>
         </form>
       </Form>

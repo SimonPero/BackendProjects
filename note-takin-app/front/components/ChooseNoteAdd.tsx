@@ -11,13 +11,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { PencilLine, Upload } from "lucide-react";
+import { PencilLine } from "lucide-react";
 
-import FileForm from "./FileForm"; // Import your file upload component
+import FileForm from "./FileForm";
 import { redirect } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ChooseNoteAdd() {
+  const { language } = useLanguage();
   const [openMainDialog, setOpenMainDialog] = useState(false);
   const [openFileDialog, setOpenFileDialog] = useState(false);
 
@@ -37,18 +39,22 @@ export default function ChooseNoteAdd() {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Create your note</AlertDialogTitle>
+            <AlertDialogTitle>
+              {language === "en" ? "Create your note" : "Crea una anotación"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Would you like to write a new note or upload a file instead?
+              {language === "en"
+                ? "Would you like to write a new note or upload a file instead?"
+                : "¿Quieres escribir una nota o subir un arhivo preexistente?"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpenFileDialog(true)}>
-              Upload a File
+              {language === "en" ? "Upload a File" : "Subir archivo"}
             </AlertDialogCancel>
 
             <AlertDialogAction onClick={manualNote}>
-              Write a note
+              {language === "en" ? "Write a note" : "Escribe una anotación"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -57,16 +63,19 @@ export default function ChooseNoteAdd() {
       <AlertDialog open={openFileDialog} onOpenChange={setOpenFileDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Upload a File</AlertDialogTitle>
+            <AlertDialogTitle>
+              {language === "en" ? "Upload a File" : "Subir archivo"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              You can upload a file in .md format with a size limit of 150 KB.
+              {language === "en"
+                ? "You can upload a file in .md format with a size limit of 150 KB."
+                : "Puedes subir un archivo md con un limite de 150 KB"}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <FileForm />
           <AlertDialogFooter>
-            {/* Cancel Button to close the file dialog */}
             <AlertDialogCancel onClick={() => setOpenFileDialog(false)}>
-              Cancel
+              {language === "en" ? "Cancel" : "Cancelar"}
             </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
