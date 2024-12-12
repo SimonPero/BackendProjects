@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -71,8 +72,9 @@ export default function Page() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    registerUser(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await registerUser(values);
+    redirect("/user/login")
   }
 
   return (
