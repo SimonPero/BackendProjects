@@ -20,7 +20,6 @@ import { z } from "zod";
 export default function Page() {
   const { language } = useLanguage();
 
-  // Mensajes de error dinámicos basados en el idioma
   const errorMessages = {
     en: {
       name: "Name must be at least 2 characters.",
@@ -38,7 +37,6 @@ export default function Page() {
     },
   };
 
-  // Esquema de validación con Zod dinámico
   const formSchema = z
     .object({
       name: z

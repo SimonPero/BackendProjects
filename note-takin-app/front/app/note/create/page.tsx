@@ -1,7 +1,6 @@
 "use client";
 
 import { createNote } from "@/app/actions";
-import FileForm from "@/components/FileForm";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,8 +19,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Page() {
   const { language } = useLanguage();
-
-  // Mensajes de error dinámicos basados en el idioma
+  
   const errorMessages = {
     en: {
       title: "Title must exist.",
@@ -33,7 +31,6 @@ export default function Page() {
     },
   };
 
-  // Esquema de validación con Zod dinámico
   const formSchema = z.object({
     title: z.string().min(1, { message: errorMessages[language].title }),
     content: z.string().min(1, { message: errorMessages[language].content }),

@@ -21,7 +21,6 @@ import { z } from "zod";
 export default function LoginPage() {
   const { language } = useLanguage();
 
-  // Mensajes de error dinámicos basados en el idioma
   const errorMessages = {
     en: {
       email: "Invalid email address.",
@@ -35,7 +34,6 @@ export default function LoginPage() {
     },
   };
 
-  // Esquema de validación dinámico
   const formSchema = z.object({
     email: z
       .string()
