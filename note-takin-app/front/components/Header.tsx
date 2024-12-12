@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { PencilLine } from "lucide-react";
 import { NoteDto } from "@/types/dto/note.dto";
 import LogOut from "./LogOut";
 import SearchForm from "./SearchForm";
 import LanguageSelector from "./LanguageSelector";
 import { cookies } from "next/headers";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import ChooseNoteAdd from "./ChooseNoteAdd";
 
 export default async function Header({
   notes,
@@ -26,12 +26,7 @@ export default async function Header({
           </Link>
           <div className="flex items-center ml-auto">
             <SearchForm notes={notes} />
-            <Link
-              href="/note/create"
-              className="mr-3 p-2 hover:shadow-md hover:shadow-stone-950"
-            >
-              <PencilLine className="size-6" />
-            </Link>
+            <ChooseNoteAdd />
           </div>
           {auth ? (
             <LogOut />

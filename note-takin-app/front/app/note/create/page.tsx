@@ -1,6 +1,7 @@
 "use client";
 
 import { createNote } from "@/app/actions";
+import FileForm from "@/components/FileForm";
 import { Button } from "@/components/ui/button";
 import {
   Form,
