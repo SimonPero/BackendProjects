@@ -27,7 +27,9 @@ export default function ChooseNoteAdd() {
     setOpenMainDialog(false);
     redirect("/note/create");
   }
-
+  function uploadFinished() {
+    setOpenFileDialog(false);
+  }
   return (
     <>
       <AlertDialog open={openMainDialog} onOpenChange={setOpenMainDialog}>
@@ -72,7 +74,7 @@ export default function ChooseNoteAdd() {
                 : "Puedes subir un archivo md con un limite de 150 KB"}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <FileForm />
+          <FileForm uploadFinished={uploadFinished} />
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpenFileDialog(false)}>
               {language === "en" ? "Cancel" : "Cancelar"}

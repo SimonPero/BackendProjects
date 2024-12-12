@@ -70,6 +70,33 @@ class NotesApi {
     return data;
   }
 
+  async uploadCreateNote(file: File): Promise<NoteDto> {
+    const auth = await getAuthCookie();
+    if (!auth) {
+      throw new Error("Authentication required");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`${process.env.API_URL}/notes/upload`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Cookie: `${auth.name}=${auth.value}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Upload failed: ${errorText}`);
+    }
+
+    const data = await res.json();
+    return data;
+  }
+
   async deleteNote(id: string): Promise<void> {
     const auth = await getAuthCookie();
     if (!auth) {

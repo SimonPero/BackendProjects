@@ -107,10 +107,17 @@ export async function grammarCheckNote(
 
   return corrections;
 }
+
 export async function saveNoteChanges(toChange: putNoteData, noteId: string) {
   return await notesApi.updateNote(toChange, noteId);
 }
+
 export async function getNoteById(id: string) {
   const note: NoteDto = await notesApi.getNoteById(id);
   return note;
+}
+
+export async function uploadMdFile(values: File): Promise<NoteDto> {
+  const data = await notesApi.uploadCreateNote(values);
+  return data;
 }
