@@ -24,7 +24,9 @@ export default async function Home() {
     if (searchResultsCookie?.value) {
       notes = JSON.parse(searchResultsCookie.value);
     } else {
-      notes = await notesApi.getAllNotesOfUser(auth);
+      if (auth?.value !== "") {
+        notes = await notesApi.getAllNotesOfUser(auth);
+      }
     }
   } catch (error) {
     console.error("Failed to fetch notes:", error);

@@ -11,7 +11,10 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const auth = await getAuthCookie();
-  const notes: NoteDto[] = await notesApi.getAllNotesOfUser(auth);
+  let notes: NoteDto[] = [];
+  if (auth?.value !== "") {
+    notes = await notesApi.getAllNotesOfUser(auth);
+  }
 
   return (
     <html lang="en">
