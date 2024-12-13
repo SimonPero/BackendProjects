@@ -10,7 +10,7 @@ import { Button } from "./ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { uploadMdFile } from "@/app/actions";
 import Spinner from "./Spinner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function checkFileType(file: File) {
   if (file?.name) {
@@ -44,7 +44,7 @@ export default function FileForm({
   const { language } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof fileSchema>>({
     resolver: zodResolver(fileSchema),
     defaultValues: {
@@ -57,12 +57,10 @@ export default function FileForm({
 
     try {
       setIsLoading(true);
-
       const data = await uploadMdFile(values.file);
-
       form.reset();
       uploadFinished();
-      redirect(`/note/${data.id}`);
+      router.push(`/note/${data.id}`);
     } catch (error) {
       if (error instanceof Error) {
         setServerError(error.message);
