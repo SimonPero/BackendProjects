@@ -5,14 +5,13 @@ import { CreateNoteDTO } from '../../types/dto';
 import { z } from 'zod';
 import authMiddleware from '../middlewares/authMiddleware';
 import { NotesService } from '../services/notes.service';
-import { spellChecker, SpellCheckResult } from '../services/grammar.service';
+import { spellChecker } from '../services/grammar.service';
 
 const NoteRouter = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 const createNoteSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
 	content: z.string().min(1, 'File content is required'),
-	userId: z.number().min(1, 'userId is required'),
 });
 const grammarNoteSchema = z.object({
 	text: z.string().min(1, 'text to check is required'),
@@ -23,7 +22,8 @@ const grammarNoteSchema = z.object({
 
 const updateNoteSchema = createNoteSchema.partial();
 
-NoteRouter.post('/', async (c) => {
+NoteRouter.post('/', authMiddleware, async (c) => {
+	const user = c.get('user');
 	const body: CreateNoteDTO = await c.req.json();
 	const noteService = new NotesService(c.env.DB);
 
@@ -31,6 +31,7 @@ NoteRouter.post('/', async (c) => {
 		const validatedData = createNoteSchema.parse(body);
 		const noteData = {
 			...validatedData,
+			userId: user.id,
 			noteId: crypto.randomUUID(),
 		};
 		const notes = await noteService.createNote(noteData);
@@ -159,6 +160,55 @@ NoteRouter.post('/check/:id', authMiddleware, async (c) => {
 	} catch (error) {
 		console.error('Spell check error:', error);
 		return c.json({ error: 'Spell checking failed' }, 500);
+	}
+});
+
+async function validateFile(file: File) {
+	const arrayBuffer = await file.arrayBuffer();
+	const uint8Array = new Uint8Array(arrayBuffer);
+
+	const textDecoder = new TextDecoder();
+	const fileContent = textDecoder.decode(uint8Array);
+
+	if (!fileContent.includes('#') && !fileContent.includes('*')) {
+		throw new Error('El archivo no parece ser un archivo Markdown válido.');
+	}
+
+	if (file.size > 150 * 1024) {
+		throw new Error('El archivo supera el tamaño máximo permitido.');
+	}
+
+	return true;
+}
+
+NoteRouter.post('/upload', authMiddleware, async (c) => {
+	const noteService = new NotesService(c.env.DB);
+	const user = c.get('user');
+	const body = await c.req.parseBody();
+	const file = body['file'];
+
+	const uploadedFile = file as File;
+
+	validateFile(uploadedFile);
+	const title = uploadedFile.name.split('.')[0];
+	const content = await uploadedFile.text();
+	try {
+		const noteData = {
+			title: title,
+			content: content,
+			userId: user.id,
+			noteId: crypto.randomUUID(),
+		};
+
+		const note = await noteService.createNote(noteData);
+
+		return c.json(note, 200);
+	} catch (error) {
+		if (error instanceof z.ZodError) {
+			return c.json({ error: 'Invalid request data' }, 400);
+		}
+		console.error(error);
+		return c.json({ error: 'Failed to create note' }, 500);
 	}
 });
 
