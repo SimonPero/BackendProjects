@@ -27,7 +27,11 @@ const app = new Hono<{
 app.use('/*', async (c, next) => {
 	const apiUrl = c.env.API_URL;
 
-	const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+	const allowedOrigins = [
+		'http://localhost:3000',
+		'http://127.0.0.1:3000',
+		'https://backend-projects-ra0xiajb5-simonperos-projects.vercel.app',
+	];
 
 	// Add production URL if it exists
 	if (apiUrl) {
@@ -40,7 +44,7 @@ app.use('/*', async (c, next) => {
 			if (!origin || origin === 'null') {
 				return allowedOrigins[0];
 			}
-			return allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+			return allowedOrigins.includes(origin) ? origin : allowedOrigins[3];
 		},
 		credentials: true,
 		allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
